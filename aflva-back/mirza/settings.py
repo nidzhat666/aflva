@@ -55,7 +55,6 @@ INSTALLED_APPS = [
     'drf_yasg'
 ]
 
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -158,3 +157,4 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 AVWX_TOKEN = os.environ.get('AVWX_TOKEN')
+TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')

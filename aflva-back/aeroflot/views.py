@@ -12,6 +12,7 @@ from django.db.models import Prefetch
 from django.db.models.functions import Cast
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.conf import settings
 
 from airac.scripts import add_check_airport
 from main.models import Profile, AircraftICAO
@@ -423,7 +424,7 @@ def delete_booking(request):
 
 
 def bot_send_message(message):
-    bot = telebot.TeleBot('1623919400:AAGSMYd-AmTYc7geaxgNPwvvmuhylbkkkkc')
+    bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
     staff = Profile.objects.filter(user__is_staff=True, telegram_chat_id__isnull=False)
     for i in staff:
         bot.send_message(i.telegram_chat_id, text=message)
