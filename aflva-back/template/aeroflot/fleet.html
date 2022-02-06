@@ -1,0 +1,157 @@
+{% extends 'aeroflot/base.html' %}
+{% block content %}
+    {% load main_tags %}
+    <div class="park-body"
+         style="background: url(https://www.toptal.com/designers/subtlepatterns/patterns/white_carbon.png);">
+        <div class="container" style="min-height: 60vh;">
+            <div class="row border-bottom justify-content-md-center" style="width: auto;">
+                {% for icao in icaos %}
+                    <div class="col col-sm-4 col-sm-offset-5">
+                        <div class="inner">
+                            <img src="/media/{{ icao.1 }}" class="" alt="">
+                            <table class="table table-striped">
+                                <thead>
+                                <th colspan="4" style="border: none!important;font-size:13px;">{{ icao.0 }}</th>
+                                </thead>
+                                <tbody>
+                                {% for fleet in fleets|icao_to_fleet:icao.0 %}
+                                    <tr>
+                                        <td>
+                                            <a style="color: #4169e1;"
+                                               href="{% url 'aeroflot:aircraft_details' registration=fleet.aircraft_registration %}">
+                                                {{ fleet.aircraft_registration }}
+                                            </a>
+                                        </td>
+                                        <td>{{ fleet.aircraft_type.aircraft_name }}</td>
+                                        <td title='{{ fleet.now.name }}, {{ fleet.now.city }}'>{{ fleet.now.icao_code }}</td>
+                                        {% check_fleet schedule_avail fleet.aircraft_type.aircraft_icao.aircraft_icao fleet.now.icao_code as status %}
+                                        {% if fleet.id in book or fleet.book.status == 'booked' %}
+                                            <td style="color: red!important;">Занято</td>
+                                        {% elif fleet.book.status != 'booked' and fleet.book.status != '' %}
+                                            <td style="color: blue!important;">В полете</td>
+                                        {% elif not status and request.GET.type != 'Charter' %}
+                                            <td style="color: red!important;">Недоступен</td>
+                                        {% elif schedule %}
+                                            <td onclick="book_flight({{ fleet.id }})"
+                                                style="color: green!important;cursor:pointer">Свободен
+                                            </td>
+                                        {% elif request.GET.type == 'Charter' %}
+                                            <td onclick="book_flight({{ fleet.id }})"
+                                                style="color: green!important;cursor:pointer">Свободен
+                                            </td>
+                                        {% else %}
+                                            <td>
+                                                <a style="color: green;"
+                                                   href="{% url 'aeroflot:schedules' %}?f_id={{ fleet.id }}">Свободен</a>
+                                            </td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Детали Бронирования</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                </div>
+                <div class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .inner img {
+            width: 100%;
+        }
+
+        .park-body {
+            background-image: url(https://www.toptal.com/designers/subtlepatterns/patterns/y-so-serious-white.png);
+            background-color: #e7e9e8;
+        }
+
+        .table th,
+        thead {
+            padding: 3px !important;
+        }
+
+        .table tbody,
+        td {
+            background-color: white;
+            color: black;
+            font-size: 14px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table a {
+            text-decoration: none;
+        }
+
+        .col.col-sm-4.col-sm-offset-5 {
+            padding-left: 5px;
+            padding-right: 5px;
+            padding-top: 10px;
+        }
+
+        .inner {
+            box-shadow: 0 0 10px rgb(0 0 0 / 50%);
+        }
+
+        .park-body > .container > * > .col {
+            margin: 0px;
+        }
+    </style>
+    {% csrf_token %}
+    {% if schedule %}
+        <script>
+            var schedule = {{schedule.id}};
+
+            function book_flight(aircraft_id) {
+                $.ajax({
+                    type: "POST",
+                    url: {%url 'aeroflot:prebook'%},
+                    data: {
+                        csrfmiddlewaretoken: jQuery('input[name=csrfmiddlewaretoken]').val(),
+                        schedule: schedule,
+                        aircraft: aircraft_id
+                    },
+                    cache: false,
+                    success: function (data) {
+                        jQuery('.modal-body').html(data);
+                        jQuery('.modal').modal('show')
+                    }
+                });
+            }
+
+        </script>
+    {% elif request.GET.type == 'Charter' %}
+        <script>
+            function book_flight(aircraft_id) {
+                $.ajax({
+                    type: "POST",
+                    url: {%url 'aeroflot:prebook'%},
+                    data: {
+                        csrfmiddlewaretoken: jQuery('input[name=csrfmiddlewaretoken]').val(),
+                        aircraft: aircraft_id,
+                        charter: true
+                    },
+                    cache: false,
+                    success: function (data) {
+                        jQuery('.modal-body').html(data);
+                        jQuery('.modal').modal('show')
+                    }
+                });
+            }
+
+        </script>
+    {% endif %}
+{% endblock %}

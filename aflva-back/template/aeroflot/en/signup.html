@@ -1,0 +1,153 @@
+{%extends 'aeroflot/en/base.html'%}
+{%block content%}
+{% load countries %}
+{% get_countries as countries %}
+<div class="container signup text-center">
+    <br>
+    <form class="signup" action="{%url 'aeroflot:signup'%}" method="POST">
+        {% csrf_token %}
+        <h2>Sign Up</h2>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            If you flight on the old version of the company, then within a week after registration we will transfer your
+            flights to a new account.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div class="row">
+            <div class="col form-group has-validation">
+                <label for="first_name">First Name</label>
+                <input aria-describedby="validationFirstName" id='first_name' type="text" class="form-control"
+                    name="first_name" placeholder="Michael" required="required">
+            </div>
+            <div class="col col-auto" style="width: 10px;"></div>
+            <div class="col form-group">
+                <label for="last_name">Last Name</label>
+                <div><input id='last_name' type="text" class="form-control" name="last_name" placeholder="Ataev"
+                        required="required"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input id='email' type="email" class="form-control" name="email" placeholder="example@nzmaslo.ru"
+                required="required">
+            <div class="invalid-feedback">
+                Email is already in use.
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="country">Country</label>
+            <select name="country" id="country" class="form-control" id="exampleFormControlSelect1" required>
+                <option value="">-</option>
+                {%for i in countries%}
+                <option value="{{i.0}}">{{i.1}}</option>
+                {%endfor%}
+            </select>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col">
+                    <label for="vatsim_id">Vatsim ID</label>
+                    <input pattern="[0-9]+" id='vatsim_id' type="text" class="form-control" name="vatsim_id"
+                        placeholder="">
+                    <div class="invalid-feedback">
+                        This Vatsim ID is already registred.
+                    </div>
+                </div>
+                <div class="col col-auto" style="width: 10px;"></div>
+                <div class="col">
+                    <label for="ivao_id">IVAO ID</label>
+                    <input pattern="[0-9]+" id='ivao_id' type="text" class="form-control" name="ivao_id" placeholder="">
+                    <div class="invalid-feedback">
+                        This Ivao ID is already registred.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
+        </div>
+    </form>
+    <br>
+</div>
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Successfully</h5>
+            </div>
+            <div class="modal-body">
+                Registration completed successfully. A letter with a password was sent to the mail you indicated. Enter
+                it on the authorization page and, if necessary, change it in your personal account.
+            </div>
+            <div class="modal-footer">
+                <a href="{%url 'aeroflot:login'%}"><button type="button" class="btn btn-secondary">Go to the login
+                        page</button></a>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    input,
+    select {
+        text-align: center;
+        text-align-last: center;
+    }
+
+    .signup {
+        max-width: 800px;
+    }
+
+    .signup .form-group {
+        margin-top: 10px;
+    }
+
+    .signup .row {
+        margin: 0;
+    }
+
+    .signup .col {
+        padding: 0px;
+        margin: 0;
+    }
+</style>
+<script>
+    jQuery(document).ready(() => {
+        jQuery('#first_name, #last_name').focusout(() => {
+            var first_name = jQuery('#first_name').val()
+            if (first_name) {
+                first_name = first_name[0].toUpperCase() + first_name.slice(1)
+                jQuery('#first_name').val(first_name);
+            }
+            var last_name = jQuery('#last_name').val()
+            if (last_name) {
+                last_name = last_name[0].toUpperCase() + last_name.slice(1)
+                jQuery('#last_name').val(last_name)
+            }
+        })
+        jQuery('.signup').submit((e) => {
+            jQuery('button[type=submit]').attr('class', 'btn btn-primary btn-lg disabled')
+            e.preventDefault();
+            var data = {}
+            var form = jQuery('.signup')
+            form.serializeArray().map(function (x) { data[x.name] = x.value; });
+            jQuery.ajax({
+                type: 'POST',
+                url: form.attr('action'),
+                cache: false,
+                data: form.serialize(),
+                success: function (data) {
+                    if (data['error']) {
+                        jQuery('button[type=submit]').attr('class', 'btn btn-primary btn-lg')
+                        data['error'].forEach(element => jQuery(`input[name=${element}]`).attr('class', 'form-control is-invalid'))
+                    }
+                    else if (data['success']) {
+                        jQuery('.modal').modal('show')
+                    }
+                }
+            })
+            return false;
+        })
+    })
+</script>
+{%endblock%}

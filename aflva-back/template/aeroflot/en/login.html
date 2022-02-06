@@ -1,0 +1,177 @@
+{%extends 'aeroflot/en/base.html'%}
+{%block content%}
+<style>
+  .form-signin {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+  }
+
+  .form-signin .checkbox {
+    font-weight: 400;
+  }
+
+  .form-signin .form-floating:focus-within {
+    z-index: 2;
+  }
+
+  .form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  .form-resetpass {
+    width: 100%;
+    max-width: 90%;
+    padding: 15px;
+    margin: auto;
+  }
+
+  .form-resetpass .checkbox {
+    font-weight: 400;
+  }
+
+  .form-resetpass .form-floating:focus-within {
+    z-index: 2;
+  }
+
+  .form-resetpass .email {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .form-resetpass .vatsim {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+</style>
+<div class='login-body' class="text-center" style="min-height: 45vh">
+  <form class="form-signin text-center" method="POST" action="{% url 'aeroflot:login'%}">
+    <div class="alert alert-danger" role="alert" style="display: none;">
+      Wrong Email or Password!
+    </div>
+    {% csrf_token %}
+    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+    <div class="form-floating">
+      <input name="email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+      <label for="floatingInput">Email address</label>
+    </div>
+    <div class="form-floating">
+      <input name="password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
+      <label for="floatingPassword">Password</label>
+    </div>
+
+    <div class="mb-3">
+      <p style="cursor: pointer; text-decoration:underline;color:#0d6efd" onclick="$('.modal').modal('show');">Forgot
+        Password?</a>
+    </div>
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+  </form>
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Reset Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form class="form-resetpass text-center" method="POST" action="{% url 'aeroflot:reset_password'%}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="alert alert-danger" role="alert" style="display: none;">
+            Wrong Email or ID!
+          </div>
+          <div class="alert alert-success" role="alert" style="display: none;">
+            Your new password has been sent to your email.
+          </div>
+          <div class="form-floating">
+            <input name='email' type="email" class="form-control email" id="floatingInput">
+            <label for="floatingInput">Email address</label>
+          </div>
+          <div class="form-floating">
+            <input name='vatsim' type="number" class="form-control vatsim" id="floatingInput">
+            <label for="floatingInput">Vatsim or IVAO ID</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button submit" class="btn btn-primary reset-submit">Reset</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+  }
+  jQuery(document).ready(() => {
+    jQuery('.form-signin').submit(() => {
+      var data = {}
+      var form = jQuery('.form-signin')
+      form.serializeArray().map(function (x) { data[x.name] = x.value; });
+      jQuery.ajax({
+        type: 'POST',
+        url: form.attr('action'),
+        cache: false,
+        data: form.serialize(),
+        success: function (data) {
+          var csrftoken = getCookie('csrftoken');
+          jQuery('.form-signin input[name=csrfmiddlewaretoken]').val(csrftoken)
+          if (data['error']) {
+            jQuery('.form-signin .alert-danger').fadeIn()
+          }
+          else{
+            window.location.href = '{%url "aeroflot:main"%}';
+          }
+        }
+      })
+      return false;
+    })
+    jQuery('.form-resetpass').submit(() => {
+      var data = {}
+      var form = jQuery('.form-resetpass')
+      form.serializeArray().map(function (x) { data[x.name] = x.value; });
+      jQuery.ajax({
+        type: 'POST',
+        url: form.attr('action'),
+        cache: false,
+        data: form.serialize(),
+        success: function (data) {
+          if (data['success']) {
+            jQuery('.form-resetpass .alert-danger').fadeOut()
+            jQuery('.form-resetpass .alert-success').fadeIn()
+          }
+          else{
+            jQuery('.form-resetpass .alert-success').fadeOut()
+            jQuery('.form-resetpass .alert-danger').fadeIn()
+          }
+        }
+      })
+      return false;
+    })
+  })
+</script>
+{%endblock%}

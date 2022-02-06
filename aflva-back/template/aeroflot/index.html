@@ -1,0 +1,996 @@
+{% extends 'aeroflot/base.html' %}
+{% block first_body %}
+    {% load main_tags %}
+    {% load static %}
+    {% get_companies as companies %}
+    {% get_companies True as companies_retro %}
+    <div class="first-body">
+        <div class="container head" style="text-align: center;padding-top:10px">
+            <div class="row" style="margin-top: 10px; margin-left:0px;">
+                <div class="col col-md-3 col-sm-4 col-lg">
+                    <img style="height: 90px;" src="{% static 'images/topbanner1.png' %}" alt="">
+                </div>
+                <div class="col col-md-3 col-sm-4 col-lg">
+                    <span id="t1"></span>
+                </div>
+                <div class="col col-md-3 col-sm-4 col-lg lang-icons">
+                    <a href="{{ request.path }}?lang=en"><img
+                            src="https://raw.githubusercontent.com/nidzhat666/images/main/united-kingdom.png"
+                            alt=""></a><br>
+                    <a href="{{ request.path }}?lang=ru"><img
+                            src="https://raw.githubusercontent.com/nidzhat666/images/main/russia.png" alt=""></a>
+                </div>
+            </div>
+            <br>
+            <nav class="nav justify-content-center">
+                {% url 'aeroflot:main' as url %}
+                <a href="{{ url }}" role="button"
+                   class="btn btn-outline-light {% if request.path == url %} active {% endif %}">Главная</a>
+                {% url 'aeroflot:profile' as url %}
+                <a href="{{ url }}" role='button'
+                   class="btn btn-outline-light {% if request.path == url %} active {% endif %}">Профиль</a>
+                {% url 'aeroflot:schedules' as url %}
+                <div class="btn-group">
+                    <button type="button"
+                            class="btn btn-outline-light {% if request.path == url %} active {% endif %} dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        Расписание
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% for company in companies %}
+                            <li>
+                                <a class="dropdown-item d-flex justify-content-between"
+                                   href="{{ url }}?company={{ company }}">
+                                    {{ company }}
+                                    <img style="margin-left: 15px; width: 22px" src="{{ company.logo.url }}" alt="">
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% url 'aeroflot:fleet' as url %}
+                <div class="btn-group">
+                    <button type="button"
+                            class="btn btn-outline-light {% if request.path == url and not request.GET.type %} active {% endif %} dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        Авиапарк
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% for company in companies %}
+                            <li>
+                                <a class="dropdown-item d-flex justify-content-between"
+                                   href="{{ url }}?company={{ company }}">
+                                    {{ company }}
+                                    <img style="margin-left: 15px; width: 22px" src="{{ company.logo.url }}" alt="">
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="btn-group">
+                    <button type="button"
+                            class="btn btn-outline-light {% if request.path == url and request.GET.type == 'Retro' %} active {% endif %} dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        Ретро парк
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% for company in companies_retro %}
+                            <li>
+                                <a class="dropdown-item d-flex justify-content-between"
+                                   href="{{ url }}?company={{ company }}&type=Retro">
+                                    {{ company }}
+                                    <img style="margin-left: 15px; width: 22px" src="{{ company.logo.url }}"
+                                         alt="">
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="btn-group">
+                    <button type="button"
+                            class="btn btn-outline-light {% if request.path == url and request.GET.type == 'Charter' %} active {% endif %} dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        Чартер
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% for company in companies %}
+                            <li>
+                                <a class="dropdown-item d-flex justify-content-between"
+                                   href="{{ url }}?company={{ company }}&type=Charter">
+                                    {{ company }}
+                                    <img style="margin-left: 15px; width: 22px" src="{{ company.logo.url }}"
+                                         alt="">
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% url 'aeroflot:crew' as url %}
+                <a href="{{ url }}" role='button'
+                   class="btn btn-outline-light {% if request.path == url %} active {% endif %}">Экипаж</a>
+                {% url 'aeroflot:online' as url %}
+                <a href="{{ url }}" role='button'
+                   class="btn btn-outline-light {% if request.path == url %} active {% endif %}">Онлайн</a>
+                <a href="http://rfinder.asalink.net/free/" role='button' class="btn btn-outline-light">Маршрут</a>
+                <!-- <a role='button' class="btn btn-outline-light">Файлы</a> -->
+                <!-- <a role='button' class="btn btn-outline-light">Форум</a> -->
+                {% if request.user.is_staff %}
+                    <a href='/admin' role='button' class="btn btn-outline-light">Админ Центр</a>
+                {% endif %}
+                <style>
+                    .dropdown-menu {
+                        min-width: auto !important;
+                    }
+
+                    .btn-group {
+                        margin: 1px;
+                    }
+                </style>
+            </nav>
+
+            <br>
+            <br>
+        </div>
+        <div class="container">
+            {% with user.profile as profile %}
+                {% with user.pilot as pilot %}
+                    <div class="head-info row">
+                        <div class="col col-md-3 col-sm-4 col-lg profile">
+                            <span>User</span><br>
+                            <div>
+                                <img style="width: 42px;"
+                                     src="https://github.com/nidzhat666/images/blob/main/profile-logo1.png?raw=true"
+                                     alt="">
+                            </div>
+                            <br>
+                            <div class="profile-content">
+                                <div class="user-photo border-bottom">
+                                    <img style="width:100px ;"
+                                         src="https://github.com/nidzhat666/images/blob/main/pilot-1426960-1208500.png?raw=true"
+                                         alt=""><br>
+                                    <p><b>{{ request.user.first_name }} {{ request.user.last_name }}</b></p>
+                                </div>
+                                <div class='row'>
+                                    <div class="col" style="padding-left: 18px;">
+                                        <span style="color: #6e6e6e;">{{ profile.now }}</span>
+                                    </div>
+                                    <div class="col">
+                                        <img style="border-radius: 25%;"
+                                             src="https://lipis.github.io/flag-icon-css/flags/4x3/{{ profile.location|lower }}.svg"
+                                             alt="">
+                                    </div>
+                                    <div class="col">
+                                        {% with hours=pilot.hours|add:pilot.additional_hours %}
+                                            {% if hours|convert_hours < 50 %} <img
+                                                    src="{% static 'images/ranks/newhire.png' %}" alt="">
+                                            {% elif hours|convert_hours < 100 %} <img
+                                                    src="{% static 'images/ranks/newhire2.png' %}" alt="">
+                                            {% elif hours|convert_hours < 150 %} <img
+                                                    src="{% static 'images/ranks/newhire3.png' %}" alt="">
+                                            {% elif hours|convert_hours < 300 %} <img
+                                                    src="{% static 'images/ranks/newhire4.png' %}" alt="">
+                                            {% elif hours|convert_hours < 500 %} <img
+                                                    src="{% static 'images/ranks/newhire5.png' %}" alt="">
+                                            {% elif hours|convert_hours < 750 %} <img
+                                                    src="{% static 'images/ranks/newhire6.png' %}" alt="">
+                                            {% elif hours|convert_hours < 1000 %} <img
+                                                    src="{% static 'images/ranks/newhire7.png' %}" alt="">
+                                            {% elif hours|convert_hours < 1300 %} <img
+                                                    src="{% static 'images/ranks/newhire8.png' %}" alt="">
+                                            {% elif hours|convert_hours < 1700 %} <img
+                                                    src="{% static 'images/ranks/newhire9.png' %}"
+                                                    alt="">
+                                            {% else %}
+                                                <img src="{% static 'images/ranks/newhire10.png' %}"
+                                                     alt="">
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                </div>
+                                <div class="vatsim-ivao-id">
+                                    {% if profile.vatsimid %}
+                                        <span>
+                            VATSIM ID: <b>{{ profile.vatsimid }}</b>
+                        </span>
+                                    {% endif %}
+                                </div>
+                                <div class="vatsim-ivao-id border-bottom">
+                                    {% if profile.ivaoid %}
+                                        <span>
+                            IVAO ID: <b>{{ profile.ivaoid }}</b>
+                        </span>
+                                    {% endif %}
+                                </div>
+                                <div class="exit" style="margin-bottom: 5px;">
+                                    <a href="{% url 'aeroflot:logout' %}"><img style="margin-right:3px"
+                                                                               src="https://raw.githubusercontent.com/nidzhat666/images/main/power.svg"
+                                                                               alt="">Logout</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col col-md-3 col-sm-4 col-lg header-text">
+                            <div>
+                                <span> Welcome to <br><b>«Sky Planet Aviation Group»</b></span><br><br>
+                            </div>
+                            <div class="border-bottom" style="width: 50%;margin:auto;"></div>
+                            <br>
+                            <div>
+                                <span>simulates in VATSIM and IVAO</span>
+                            </div>
+                            <br><br><br>
+                            <div style="cursor: pointer;" onclick="jQuery('#staticBackdrop').modal('show')"
+                                 data-toggle="modal"
+                                 data-target="#exampleModalScrollable">
+                                <img width="170px"
+                                     src="https://github.com/nidzhat666/images/blob/main/AFL-FDR.png?raw=true"
+                                     alt="">
+                            </div>
+                        </div>
+                        <div class="col col-md-3 col-sm-4 col-lg">
+                            <span>Discord</span><br>
+                            <div>
+                                <a href="https://discord.gg/rEyRzYWMQS"><img style="width: 42px;"
+                                                                             src="https://github.com/nidzhat666/images/blob/main/discord.png?raw=true"
+                                                                             alt=""></a>
+                            </div>
+                            <div style="height: 282px;">
+
+                            </div>
+                        </div>
+                    </div>
+                {% endwith %}
+            {% endwith %}
+        </div>
+
+        <br><br>
+    </div>
+{% endblock %}
+{% block content %}
+    </div>
+    <div class="second-body">
+        <div class="container container-tabs">
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="nav-link {% if not news %} active {% endif %}" id="nav-contact-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#nav-projects" type="button" role="tab" aria-controls="nav-contact"
+                            aria-selected="false">Наши Проекты
+                    </button>
+                    <button class="nav-link {% if news %} active {% endif %}" id="nav-contact-tab" data-bs-toggle="pill"
+                            data-bs-target="#nav-news" type="button" role="tab" aria-controls="nav-contact-tab"
+                            aria-selected="false">Новости
+                    </button>
+                    <button class="nav-link" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                            type="button" role="tab" aria-controls="nav-home" aria-selected="true">О нас
+                    </button>
+                    <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-rules"
+                            type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Устав
+                    </button>
+                    <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-career"
+                            type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Статистика
+                    </button>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                    <!-- <table class="table table-bordered first-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Статистика</th>
+                                <th scope="col">ICAO</th>
+                                <th scope="col">IATA</th>
+                                <th scope="col">Callsign</th>
+                                <th scope="col">Pilots</th>
+                                <th scope="col">Flights</th>
+                                <th scope="col">Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border-left: none;" scope="row"><a href="https://www.afl-va.ru/">«Sky Planet Aviation Group»</a></td>
+                                <td>AFL</td>
+                                <td>SU</td>
+                                <td>Sky Planet</td>
+                                <td>383</td>
+                                <td>25066</td>
+                                <td style="border-right: none;">102814:46:52</td>
+                            </tr>
+                        </tbody>
+                    </table> -->
+                    <div>
+                        <p class="ust1"><b>Флот </b> Виртуальной авиакомпании состоит из самолетов летающих в составе
+                            реальных авиакомпании.
+                        </p>
+                        <p class="ust1"><b>Маршрутная сеть и расписание</b> соответствует реальному расписанию реальных
+                            авиакомпании.
+                        </p>
+                        <!-- <p class="ust1"><b>Пилоты</b> – увлеченные небом любители и энтузиасты виртуальных полетов в
+                                сети ВАТСИМ и ИВАО, реальные
+                                пилоты и диспетчеры.
+                            </p> -->
+                        <p class="ust1"><b>Программное обеспечение</b> разработанное командой «Sky Planet Aviation
+                            Group» призвано
+                            упростить процесс предполетной подготовки путем предоставления пилоту следующих сервисов:
+                        </p>
+                        <ul>
+                            <li>расчет количества пассажиров, груза и общей загрузки для конкретного ВС на каждый рейс
+                            </li>
+                            <li>расчет маршрута с предоставлением эшелона и плана полета в соответствии с актуальными
+                                аэронавигационными циклами
+                            </li>
+                            <li>автоматическое резервирование рейса в сети ВАТСИМ, с указанием позывного, типа
+                                воздушного
+                                судна, аэропортов вылета и прилета, запасного аэродрома, плана полета, эшелона,
+                                скорости,
+                                расчетного времени вылета и прибытия, дополнительных ремарок
+                            </li>
+                            <li>по окончании рейса, пилот может ознакомиться с логом полета на сайте.
+                            </li>
+                        </ul>
+                        <p class="ust1">Система «Sky Planet Aviation Group» предоставляет информацию для
+                            выполнения
+                            рейса в соответствии с правилами сети ВАТСИМ и ИВАО.
+                        </p>
+                        <p class="ust1"><b>Программы</b>, необходимые для выполнения полетов в «Sky Planet Aviation
+                            Group»:
+                        </p>
+                        <ul>
+                            <li>Cимулятор полетов Microsoft Flight Simulator, Prepar3D или X-Plane.</li>
+                            <li>Зарегистрированная версия FSUIPC или XPUIPC.</li>
+                            <li>Клиент для полетов в сети VATSIM или IVAO.</li>
+                            <li>Актуальный установленный AIRAC.</li>
+                            <li>Пилотский клиент <b>Aeroflot Agent</b> – доступен для скачивания на сайте.
+                            </li>
+                        </ul>
+                        <p class="ust1"><b>Хотите летать в «Sky Planet Aviation Group»?</b> Мы открыты для вас.
+                        </p>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-rules" role="tabpanel" aria-labelledby="nav-rules-tab">
+                    <div style="display: block;" id="div3">
+                        <p align="center" class="ust">1. Общие положения.</p>
+                        <p class="ust">1.«Sky Planet Aviation Group»
+                            —
+                            представляет собой сообщество любителей авиации,
+                            объединенных желанием осуществлять виртуальные полеты в сети «IVAO» и «VATSIM».</p>
+                        <p class="ust">2.«Sky Planet Aviation Group» выполняет полеты в соответствии с правилами,
+                            руководствами и
+                            нормативными документами сети «IVAO» и «VATSIM».</p>
+                        <p class="ust">3.Мы не требуем досконального знания РЛЭ и процедур по типам ВС, аэродинамики,
+                            аэронавигации, метеорологии и других дисциплин. В сети достаточно материалов для
+                            полноценного
+                            самообразования.</p>
+                        <p class="ust">4.Все материалы, опубликованные на сайте, предназначены только для виртуальных
+                            полетов и никаким образом не могут быть применены в реальной авиации.</p>
+                        <p align="center" class="ust">2. Производство полётов.</p>
+                        <p class="ust">1.Полёты производятся в авиасимуляторах Microsoft Flight Simulator, Prepar3D или
+                            X-Plane. Одновременный полёт в двух сетях не допускается.</p>
+                        <p class="ust">2.Пилотам не разрешено включение ускорения во время полёта, хотя информация о
+                            выполненном полете сохраняется, он не включается в налет пилота и статистику авиакомпании.
+                        </p>
+                        <p align="center" class="ust">3. Правила выполнения полётов.</p>
+                        <p class="ust">1.Все пилоты ВА обязаны выполнять правила полётов в сети «IVAO» и «VATSIM».
+                        </p>
+                        <p class="ust">2.Все пилоты ВА обязаны своевременно выполнять все выданные диспетчером УВД
+                            указания.
+                        </p>
+                        <p class="ust">3.При отсутствии диспетчерского контроля – обязательно использование пилотами
+                            частоты
+                            Юником, а именно доклад о своих действиях текстом и оценка сообщений других пилотов, в
+                            случае
+                            если в аэропорту прилёта или вылета есть хотя бы одно ВС. Использование Юником является
+                            обязательным для всех пилотов ВА, так как это является частью радиоосмотрительности, что на
+                            прямую влияет на безопасность полётов. При игнорировании этого правила к пилоту могут быть
+                            применены различные меры наказания, вплоть до отчисления.
+                        </p>
+                        <p class="ust">4.Максимальное время резервирования ВС составляет 24 часа. То есть, если в
+                            течение
+                            этого времени обратный рейс не выполнен пилотом, выполнившим первый рейс (рейс туда), при
+                            условии резервирования данным экипажем обратного рейса – борт имеет право взять любой пилот.
+                            Если борт не был зарезервирован пилотом, выполнившим первый рейс, то его может
+                            зарезервировать
+                            любой другой пилот.
+                        </p>
+                        <p class="ust">5.Запрещается злоупотреблять букингом, то есть резервировать борт, заранее зная,
+                            что
+                            рейс выполняться не будет. К пилотам, замеченным в таких нарушениях, будут применяться
+                            санкции
+                            вплоть до отчисления из ВА! («Уважаемые друзья, если вы знаете что не полетите в обратный
+                            рейс,
+                            то не следует лишать других пилотов (ваших коллег) выполнить его вместо вас.Мы все одна
+                            команда
+                            и должны уважать друг друга!»)
+                        </p>
+                        <p align="center" class="ust">4. Положение о пилотах.</p>
+                        <p class="ust">1.Заявку на вступление в ВА может подать любой человек, имеющий регистрацию в
+                            сети
+                            «IVAO» и «VATSIM».
+                        </p>
+                        <p class="ust">2.Все пилоты ВА обязаны выполнять полеты только через букинг на этом сайте, за
+                            исключением учебно-тренировочных полетов, в случае
+                            которых
+                            необходимо использовать личный позывной пилота. Например: AFL7000
+                        </p>
+                        <p class="ust">3.При грубом нарушении действующим пилотом Устава или Руководства по Производству
+                            Полетов «Sky Planet Aviation Group», при злоупотреблении нарушениями, не толерантном
+                            поведении по
+                            отношению к
+                            другим пилотам, диспетчерам или виртуальным авиакомпаниям системы ВАТСИМ или ИВАО, или
+                            других
+                            иных публичных ресурсов посвящённых системе ВАТСИМ и ВАТРУС пилот может быть отчислен из
+                            ВАК.
+                            <br>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-career" role="tabpanel" aria-labelledby="nav-career-tab">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th scope="col"># Рейса</th>
+                            <th scope="col" colspan="3">Вылет</th>
+                            <th scope="col" colspan="3">Прилет</th>
+                            <th scope="col">Пилот</th>
+                            <!-- <th scope="col">Время в пути</th> -->
+                            <th scope="col">Дата рейса</th>
+                            <!-- <th scope="col">Статус</th> -->
+                            <th scope="col">Рейтинг</th>
+                        </tr>
+                        </thead>
+                        <tbody class="flights-table">
+                        {% for i in flights %}
+                            <tr>
+                                <td><img src="{{ i.company.logo.url }}" alt="" style="width: 22px;"></td>
+                                <td style="text-align: center!important;">{{ i.callsign }}</td>
+                                <td style="margin: auto;">
+                                    <img style="width: 18px;"
+                                         src="{% static 'countries/' %}{{ i.departure_airport.country|lower }}.png"
+                                         alt="">
+                                </td>
+                                <td>{{ i.departure_airport.icao_code }}</td>
+                                <td>
+                                    {{ i.departure_airport.name }}
+                                </td>
+                                <td style="margin: auto;">
+                                    <img style="width: 18px;"
+                                         src="{% static 'countries/' %}{{ i.arrival_airport.country|lower }}.png"
+                                         alt="">
+                                </td>
+                                <td>{{ i.arrival_airport.icao_code }}</td>
+                                <td>{{ i.arrival_airport.name }}</td>
+                                <td style="text-align: center!important;">{{ i.pilot.profile.first_name }}
+                                    {{ i.pilot.profile.last_name }}</td>
+                                <td style="text-align: center!important;">{{ i.dep_time|date:'d.m.Y' }}</td>
+                                {% if i.points < 100 %}
+                                    <td onclick="flight_view({{ i.id }})"
+                                        style="text-align: center!important; color: #ff4a4a!important; cursor:pointer">
+                                        {{ i.points }}</td>
+                                {% else %}
+                                    <td onclick="flight_view({{ i.id }})"
+                                        style="text-align: center!important;color:rgb(0, 160, 0)!important; cursor:pointer">
+                                        {{ i.points }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane {% if news %} active {% else %}fade{% endif %} news" id="nav-news" role="tabpanel"
+                     aria-labelledby="nav-news-tab" style="text-align: center;">
+                    {% if news %}
+                        {% for i in news %}
+                            <div class="border-bottom">
+                                <h4>{{ i.date|date:'d.m.Y' }}</h4>
+                                <p>{{ i.text_ru }}</p>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <h3>Нет Новостей</h3>
+                    {% endif %}
+                </div>
+                <div class="tab-pane show {% if not news %} active {% else %} fade {% endif %}" id="nav-projects"
+                     role="tabpanel"
+                     aria-labelledby="nav-projects-tab">
+                    <div class="row projects">
+                        <div class="col"><a href=""><img
+                                src="https://github.com/nidzhat666/images/blob/main/aurora_logo.png?raw=true"
+                                alt=""></a></div>
+                        <div class="col"><a href=""><img
+                                src="https://github.com/nidzhat666/images/blob/main/UTair_logo_logotype-700x175.png?raw=true"
+                                alt=""></a></div>
+                        <div class="col"><a href=""><img
+                                src="https://github.com/nidzhat666/images/blob/main/S7.png?raw=true" alt=""></a>
+                        </div>
+                        <div class="col"><a href=""><img
+                                src="https://github.com/nidzhat666/images/blob/main/1280px-Logo-pobeda-en.png?raw=true"
+                                alt=""></a></div>
+                        <div class="col"><a href=""><img
+                                src="https://github.com/nidzhat666/images/blob/main/rossiya-airlines-vector-logo.png?raw=true"
+                                alt=""></a></div>
+                        <div class="col"><a href=""><img
+                                src="https://github.com/nidzhat666/images/blob/main/logo-uzbekistan-airways.png?raw=true"
+                                alt=""></a></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="third-body" style="background-color: #022f68;">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <p>Пилотов</p>
+                    <h3><b>{{ pilots_overall.count }}</b></h3>
+                </div>
+                <div class="col">
+                    <p>Полетов</p>
+                    <h3><b>{{ flight_stat.count }}</b></h3>
+                </div>
+                <div class="col">
+                    <p>Самолетов</p>
+                    <h3><b>{{ fleet_stat.count }}</b></h3>
+                </div>
+                <div class="col">
+                    <p>Часов</p>
+                    <h3><b>{{ flight_stat.hours|convert_hours }}</b></h3>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="fourth-body"
+         style="    background: url(https://www.toptal.com/designers/subtlepatterns/patterns/subtlenet2.png);">
+        <div class="container" style="padding-top:30px;padding-bottom:30px;">
+            <div class="row">
+                <div class="col">
+                    <div class="inner">
+                        <div class="head">
+                            <span>Онлайн</span>
+                        </div>
+                        <table class="table table-bordered second-table">
+                            <tbody class='online'>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="inner">
+                        <div class="head"><span>Запланированные Рейсы</span></div>
+
+                        <table class="table table-bordered second-table">
+                            <tbody class="booked">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col">
+                    <div class="inner fast-booking">
+                        <div class="head border-bottom">
+                            <span>Быстрое Бронирование</span>
+                        </div>
+                        <br>
+                        <div>
+                            <form action="{% url 'aeroflot:schedules' %}" method="GET">
+                                <div class="row">
+                                    <div class="col-md-4" style="text-align: right;">
+                                        <span class="dot"></span><br>
+                                        <div class="vl"></div>
+                                        <span class="dot"></span>
+                                    </div>
+                                    <div class="col">
+                                        <div class="row g-3 align-items-center">
+                                            <div class="col">
+                                                <label for="inputPassword6" class="col-form-label">Вылет:</label>
+                                            </div>
+                                            <div class="col">
+                                                <input name='origin'
+                                                       style="text-transform: uppercase;text-align:center;"
+                                                       maxlength="4" type="text" id="inputPassword6"
+                                                       class="form-control"
+                                                       aria-describedby="passwordHelpInline">
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 align-items-center" style="margin-top:10px;">
+                                            <div class="col">
+                                                <label for="inputPassword6" class="col-form-label">Прилет:</label>
+                                            </div>
+                                            <div class="col">
+                                                <input name='dest' maxlength="4"
+                                                       style="text-transform: uppercase;text-align:center;" type="text"
+                                                       id="inputPassword6" class="form-control"
+                                                       aria-describedby="passwordHelpInline">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input style="background-color: #022f68;border-radius:20px;margin:10px" type="submit"
+                                       class="btn btn-primary active" role="button" aria-pressed="true" value="Найти"
+                                       name=""
+                                       id="">
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="inner">
+                        <div class="head"><span>Лучшие за {{ last_month.0 }}</span></div>
+                        <table class="table table-bordered second-table">
+                            <thead>
+                            <th>name</th>
+                            <th>flights</th>
+                            <th>score</th>
+                            </thead>
+                            <tbody>
+                            {% for top_pilot in top_pilots %}
+                                <tr>
+                                    <td>{{ top_pilot.profile.get_full_name }}</td>
+                                    <td>{{ top_pilot.flight_count }}</td>
+                                    <td>{{ top_pilot.average_rating }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fifth-body" style="background-color: #312e35;">
+        <div class="container">
+            <div class="row">
+                <div class="col" style="text-align: center;">
+                    <img src="{% static 'images/Vatsim.png' %}" alt="">
+                </div>
+                <div class="col" style="text-align: center;">
+                    <img style='height:80px; width:auto' src="{% static 'images/ru.png' %}" alt="">
+                </div>
+                <div class="col" style="text-align: center;padding-bottom:20px">
+                    <img src="https://vatrus.info/img/design/vatrus_short_logo_vector_small.webp" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sixth-body">
+        <div class="container" style="padding-top:30px;">
+            <div class="row">
+                <div class="col" style="margin-bottom: 0px;padding-bottom:0px;">
+                    <img height="290px"
+                         src="https://github.com/nidzhat666/images/blob/main/flight-attendant.png?raw=true"
+                         alt="">
+                </div>
+                <div class="col">
+                    <form action="{% url 'aeroflot:contact_us' %}" class="contact-us">
+                        {% csrf_token %}
+                        <h2 style="text-transform: uppercase;color: #595959;font-family: 'Lato', sans-serif;">Связаться
+                            С
+                            нами
+                        </h2>
+                        <span style="color: #595959;font-family: 'Lato', sans-serif;">Напишите сообщение и мы вам ответим на
+                        вашу почту</span>
+                        <br>
+                        <div style='display:none;' class="alert alert-success" role="alert">
+                            Обращение успешно отправлено
+                        </div>
+                        <div style='display:none;' class="alert alert-danger" role="alert">
+                            Some error occured.
+                        </div>
+                        <div class="mb-3 row" style="margin: 0;">
+                            <p class="col">
+                                Имя: <b>{{ request.user.first_name }} {{ request.user.last_name }} </b>
+                            </p>
+                            <p class="col">
+                                Почта: <b>{{ request.user.email }}</b>
+                            </p>
+                            <!-- <input type="name" class="form-control col" id="exampleFormControlInput1" placeholder="Ваше имя"
+                            style="margin-right: 40px;">
+                        <input type="email" class="form-control col" id="exampleFormControlInput1" placeholder="Ваш Email"> -->
+                        </div>
+                        <div class="mb-3">
+                        <textarea style="text-align:center" name='text' class="form-control"
+                                  id="exampleFormControlTextarea1" rows="6" placeholder="Ваше сообщение"></textarea>
+                        </div>
+                        <input style="background-color: #022f68;border-radius:20px;margin:10px" type="submit"
+                               class="btn btn-primary active" role="button" aria-pressed="true" value="Отправить"
+                               name=""
+                               id="">
+                    </form>
+                </div>
+                <div class="col"><img height="290px"
+                                      src="https://github.com/nidzhat666/images/blob/main/routes.png?raw=true" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="flightDetail" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Детали Полета</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                </div>
+                <div class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" tabindex="-1" id="staticBackdrop">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-body agent-download-page">
+                    <h5 style="text-align: center;">
+                        <b>
+                            Подготовка ПО Aeroflot Agent и правила выполнения полетов.
+                        </b>
+                    </h5><br>
+                    <p>
+                        ПО клиент Aeroflot Agent предназначен для полетов в виртуальных авиакомпаниях «Sky Planet
+                        Aviation Group»
+                        Полеты выполняются в сети «IVAO» и «VATSIM».
+                        Выбор и бронирование полета, просмотр статистики и текущей информации, и прочие операции
+                        выполняются на
+                        сайте.
+                        Клиент Aeroflot Agent предназначен для передачи на сайт более детальной информации о полете и
+                        отображения
+                        статуса полета.
+                    </p>
+                    <h6 style="text-align:center">
+                        <b>Перечень контролируемых параметров полета:</b>
+                    </h6>
+                    <ol>
+                        <li>
+                            Скорость симулятора (ускорение запрещено).
+                        </li>
+                        <li>Предельный угол тангажа при взлете и посадке.</li>
+                        <li>Вывод самолета на режим сваливания (по сигналу симулятора).</li>
+                        <li>Превышение максимальной скорости полета (по сигналу симулятора).</li>
+                        <li>Дозаправка в воздухе (Дозаправка в воздухе запрещено).</li>
+                        <li>Количество топлива на борту при взлёте и посадке.</li>
+                        <li>Время вылета и прилета по UTC.</li>
+                        <li>Вертикальная скорость посадки в момент касания.</li>
+                    </ol>
+
+                    <ul>
+
+                    </ul>
+                    <span style="color:black"><b>Посадка считается:</b></span><br>
+                    <ul>
+                        <li>отличный - с вертикальной скоростью в диапазоне 80-240 ft/min.</li>
+                        <li>жесткой - при вертикальной скорости свыше 500 fpm.</li>
+                        <li>аварийной - при вертикальной скорости свыше 700 fpm.</li>
+                        <li>катастрофой - при вертикальной скорости свыше 1600 fpm.</li>
+                    </ul>
+                    <h6 style="text-align:center">
+                        <b>Бонус баллы</b>
+                    </h6>
+                    <ol>
+                        <li><b>Бонус +2 баллов за длинный перелёт</b><br>Плюс к оценке за дальний рейс. Чем длиннее
+                            перелет, тем больше бонус.
+                        </li>
+                        <li><b>Бонус за отличную посадку +10 баллов</b><br>Плюс к оценке за посадку с вертикальной
+                            скоростью в диапазоне 80-240 ft/min.
+                        </li>
+                        <li><b>Бонус за порядок +10 баллов</b><br>Плюс к оценке за возвращение самолета в базовый
+                            аэропорт
+                        </li>
+                    </ol>
+                    <h6 style="text-align:center">
+                        <b>Минус баллы</b>
+                    </h6>
+                    <ol>
+                        <li><b>Штраф за крушение борта -99 баллов</b><br>Минус к оценке за разрушение самолета в аварии.
+                            Авария определяется по сигналу 'CRASH' от FSUIPC
+                            или при ударе об землю с вертикальной скоростью свыше 1600 fpm.
+                        </li>
+                        <li><b>Штраф за сваливания -20 баллов</b><br>Минус к оценке за вывод самолета на режим
+                            сваливания.
+                        </li>
+                        <li><b>Штраф за превышение скорости -5 баллов</b><br>Минус к оценке за превышение ограничения
+                            скорости, зафиксированное симулятором.
+                        </li>
+                        <li><b>Штраф за жёсткую посадку -5 баллов</b><br>Минус к оценке за грубую посадку.</li>
+                    </ol>
+                    <h6 style="text-align:center">
+                        <b>Что нам нужно для выполнения полета:</b>
+                    </h6>
+                    <ol>
+                        <li>Cимулятор полетов Microsoft Flight Simulator, Prepar3D или X-Plane.</li>
+                        <li>Зарегистрированная версия FSUIPC или XPUIPC.</li>
+                        <li>Клиент для полетов в сети VATSIM или IVAO.</li>
+                        <li>Актуальный установленный AIRAC.</li>
+                        <li>Пилотский клиент Aeroflot Agent – доступен для скачивания на сайте.</li>
+                    </ol>
+                    <h6 style="text-align:center">
+                        <b>Как забронировать рейс:</b>
+                    </h6>
+                    <p>
+                        Чтобы забронировать рейс заходим в меню расписание, выбираем нужную авиакомпанию и рейс,и
+                        нажимаем "Cвободен" и выбираем
+                        борт, далее нажимаем "Бронировать". После бронирование нажимаем "Отправить FP" в
+                        Ватсим.
+                    </p>
+                    <h6 style="text-align:center">
+                        <b>Запуск Aeroflot agent:</b>
+                    </h6>
+                    <p>
+                        Aeroflot agent не устанавливается а проста запускается (рекомендуем запускать Aeroflot agent и
+                        симулятор
+                        от имени администратора) При первом запуске клиента вводим логин и пароль который вы указали при
+                        регистрации.
+                        После того как вы забронировали рейс через сайт клиент автоматом увидит ваш бронь вам придётся
+                        всего
+                        лишь
+                        нажать кнопку "Fly" и можно лететь. После прилёта на стоянке включаем стояночный тормоз и
+                        отключаем двигатели, далее
+                        нажимаем на клиенте кнопку "Send Flight"
+                    </p>
+                    <h5 style="text-align: center;">Желаем всем приятного полета!</h5>
+                </div>
+                <div class="modal-footer">
+                        <a href="https://afl-va.ru/media/AflAgent1.0.7.exe">
+                            <button type="button" class="btn btn-primary">Скачать AFL
+                                Agent 1.0.7</button>
+                        </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+                <style>
+                    .agent-download-page p {
+                        text-indent: 1.5em; /* Отступ первой строки */
+                        text-align: justify; /* Выравнивание по ширине */
+                    }
+                </style>
+            </div>
+        </div>
+    </div>
+    <style>
+        #flightDetail .modal-body td {
+            border: 0;
+        }
+    </style>
+    <script type='text/javascript'>
+        function contentToHtml(text) {
+            return text
+                .split('\n\n')
+                .map(paragraph => `<p>${paragraph}</p>`)
+                .join('')
+        }
+
+        function flight_view(flight_id) {
+            $.ajax({
+                type: "POST",
+                url: {% url 'aeroflot:flight_view'%},
+                data: {
+                    csrfmiddlewaretoken: jQuery('input[name=csrfmiddlewaretoken]').val(),
+                    flight_id: flight_id
+                },
+                cache: false,
+                success: function (data) {
+                    jQuery('#flightDetail .modal-body').html(data);
+                    jQuery('#flightDetail').modal('show')
+                }
+            });
+        }
+
+        function hideModal() {
+            $('.modal').modal('hide');
+        };
+        jQuery(document).ready(function (param) {
+            $(".news p").each(function (index) {
+                $(this).html(contentToHtml($(this).text()))
+            })
+            jQuery('button').on('click', function () {
+                hideModal();
+            })
+        })
+        cl = function () {
+            var arr = Array(11);
+            arr[0] = 'Январь'
+            arr[1] = 'Февраль'
+            arr[2] = 'Март'
+            arr[3] = 'Апрель'
+            arr[4] = 'Май'
+            arr[5] = 'Июнь'
+            arr[6] = 'Июль'
+            arr[7] = 'Август'
+            arr[8] = 'Сентябрь'
+            arr[9] = 'Октябрь'
+            arr[10] = 'Ноябрь'
+            arr[11] = 'Декабрь'
+            chbox = document.getElementById('t1');
+            var date = new Date(),
+                hours = (date.getUTCHours() < 10) ? '0' + date.getUTCHours() : date.getUTCHours(),
+                minutes = (date.getUTCMinutes() < 10) ? '0' + date.getUTCMinutes() : date.getUTCMinutes(),
+                seconds = (date.getUTCSeconds() < 10) ? '0' + date.getUTCSeconds() : date.getUTCSeconds();
+            year = date.getUTCFullYear();
+            month = arr[date.getUTCMonth()];
+            day = date.getUTCDate();
+
+            document.getElementById('t1').innerHTML = day + " " + month + " " + year + "г. " + hours + ':' + minutes + ':'
+                + seconds + " UTC";
+        }
+        setInterval(cl, 1000);
+    </script>
+    <script>
+        var statuses = {
+            'Taxiing': '{% static 'images/taxi.png'%}',
+            'On stand': '{% static 'images/boarding.png'%}',
+            'Climb': '{% static 'images/climb.png'%}',
+            'Cruise': '{% static 'images/cruise.png'%}',
+            'Descent': '{% static 'images/des.png'%}',
+            'Arrived': '{% static 'images/landed.png'%}',
+            'Arrived - On Stand': '{% static 'images/landed.png'%}'
+        }
+
+        function liveRefreshonl() {
+            $.ajax({
+                type: "GET",
+                url: "{% url 'aeroflot:bookings_api' %}",
+                cache: false,
+                success: function (data) {
+                    var booked = jQuery('.booked').html('');
+                    var online = jQuery('.online').html('');
+                    var tr_online = ''
+                    var tr_booked = ''
+                    $.each(data, function (i, val) {
+                        if (val['status'] == 'booked') {
+                            tr_booked = tr_booked +
+                                '<tr>' +
+                                `<td><img style="width: 22px;" src="${val['company']['logo']}" alt=""></td>` +
+                                `<td title='${val['callsign']} - ${val['aircraft']['aircraft_type']['aircraft_icao']['aircraft_icao']} (${val['aircraft']['aircraft_registration']})'>${val['pilot']['profile']['first_name']} ${val['pilot']['profile']['last_name']}</td>` +
+                                `<td title='${val['dep_airport']['city']}, ${val['dep_airport']['name']}'>${val['dep_airport']['icao_code']}</td>` +
+                                `<td title='${val['arr_airport']['city']}, ${val['arr_airport']['name']}'>${val['arr_airport']['icao_code']}</td>` +
+                                '</tr>'
+
+                        } else {
+                            tr_online = tr_online +
+                                '<tr>' +
+                                `<td><img style="width: 22px;" src="${val['company']['logo']}" alt=""></td>` +
+                                `<td><img style="width: 12px;" src="${statuses[val['status']]}" title="${val['status']}"></td>` +
+                                `<td title='${val['callsign']} - ${val['aircraft']['aircraft_type']['aircraft_icao']['aircraft_icao']} (${val['aircraft']['aircraft_registration']})'>${val['pilot']['profile']['first_name']} ${val['pilot']['profile']['last_name']}</td>` +
+                                `<td title='${val['dep_airport']['city']}, ${val['dep_airport']['name']}' >${val['dep_airport']['icao_code']}</td>` +
+                                `<td title='${val['arr_airport']['city']}, ${val['arr_airport']['name']}' >${val['arr_airport']['icao_code']}</td>` +
+                                '</tr>'
+                        }
+                    });
+                    booked.html(tr_booked)
+                    online.html(tr_online)
+                }
+            });
+        };
+        liveRefreshonl();
+        setInterval(function () {
+            liveRefreshonl();
+        }, 5000);
+        jQuery('.contact-us').submit(() => {
+            var data = {}
+            var form = jQuery('.contact-us')
+            form.serializeArray().map(function (x) {
+                data[x.name] = x.value;
+            });
+            jQuery.ajax({
+                type: 'POST',
+                url: form.attr('action'),
+                cache: false,
+                data: form.serialize(),
+                success: function (data) {
+                    if (data['success']) {
+                        jQuery('.contact-us .alert-danger').fadeOut()
+                        jQuery('.contact-us .alert-success').fadeIn()
+                        jQuery('textarea[name=text]').val('')
+                    } else {
+                        jQuery('.contact-us .alert-success').fadeOut()
+                        jQuery('.contact-us .alert-danger').fadeIn()
+                    }
+                }
+            })
+            return false;
+        })
+    </script>
+{% endblock %}

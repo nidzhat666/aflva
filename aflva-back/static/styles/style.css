@@ -1,0 +1,269 @@
+.seventh-body{
+    background-color: #466aa7;
+}
+.sixth-body .container {
+    max-width: 100%;
+}
+
+.inner .head {
+    padding: 6px;
+}
+
+.fourth-body {
+    background-image: url("https://www.toptal.com/designers/subtlepatterns/patterns/y-so-serious-white.png");
+}
+
+.fourth-body .col {
+    margin: 0;
+}
+
+.fourth-body .inner {
+    background-color: white;
+    width: 320px;
+    margin: auto;
+    box-shadow: 0 0 10px rgb(0 0 0 / 50%);
+}
+
+.fourth-body .inner span {
+    margin: 0;
+    color: #014A94;
+    text-transform: uppercase;
+    font-size: 18px;
+    /* font-family: 'Lato', sans-serif; */
+
+}
+
+.fourth-body .inner label {
+    margin: 0;
+    color: #4f5150;
+    font-size: 15px;
+    /* font-family: 'Lato', sans-serif; */
+}
+
+.projects img {
+    width: 150px;
+}
+
+
+.first-table td {
+    background-color: #e7e9e8 !important;
+    color: #4f5150 !important;
+    border: 1px solid #4f5150;
+}
+
+.first-table th {
+    background-color: #022f68 !important;
+    color: #ffffff !important;
+    border: 1px solid #ffffff;
+}
+
+.second-table th,td {
+    background-color: #ffffff !important;
+    color: #4f5150 !important;
+    border: 1px solid #4f5150;
+    border-left: none;
+    border-right: none;
+    padding: 4px !important;
+}
+
+.nav-link {
+    padding: 0.5em 3em;
+    text-transform: uppercase;
+    font-size: 18px;
+}
+
+.nav-link.active {
+    border: none;
+    border-radius: 0;
+    color: #0c2e5e !important;
+}
+
+.tab-pane {
+    background-color: white;
+    padding: 15px;
+}
+
+.col {
+    padding: 3px;
+}
+
+span {
+    color: white;
+}
+
+#t1 {
+    white-space: nowrap;
+    font-family: Verdana, sans-serif;
+    font-size: 14px;
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.first-body {
+    background-color: rgb(62, 105, 173);
+    width: 100%;
+    background-image: linear-gradient(to right, #09459b, #0c4fb0, #09459b);
+    background-image: url("https://media.discordapp.net/attachments/640305539049455616/812012552955363404/background_copy.jpg");
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.col {
+    margin: auto;
+    text-align: center;
+}
+
+.lang-icons img {
+    width: 30px;
+    margin: 5px;
+    border: white 1px solid;
+    border-radius: 100%;
+}
+
+nav>a {
+    margin: 9px;
+    margin: auto;
+}
+
+.row {
+    width: 100%;
+}
+
+nav>.btn-primary.active {
+    background-color: #002046;
+    border-color: #002046;
+}
+
+.profile-content {
+    background-color: white;
+    width: 150px;
+    display: inline-block;
+    border-radius: 10px;
+    position: relative;
+}
+
+.user-photo {
+    margin: 10px;
+}
+
+.user-photo>img {
+    border: 2px solid #053565;
+    border-radius: 100%;
+}
+
+.user-photo>p {
+    color: #09459b;
+}
+
+.profile-content:before {
+    content: "";
+    border: solid transparent;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    border-bottom-color: white;
+    border-width: 9px;
+    margin-left: -9px;
+}
+
+profile-content.img {
+    width: 100%;
+}
+
+.vatsim-ivao-id span {
+    color: #8f8f8f;
+    font-size: 14px;
+}
+
+.vatsim-ivao-id b {
+    color: #6e6e6e;
+    font-family: 'Newsreader', serif;
+}
+
+.exit a {
+    color: #cb6322;
+    margin: auto;
+    text-decoration: none;
+    padding-top: 1px;
+}
+
+.exit img {
+    padding-bottom: 2px;
+}
+
+.container {
+    max-width: 1100px;
+}
+
+.header-text {
+    margin-top: 50px;
+}
+
+.second-body {
+    background-color: #e7e9e8;
+}
+
+.second-body button {
+    font-family: 'Comfortaa', cursive;
+}
+
+.third-body p {
+    margin: 0;
+    color: white;
+    text-transform: uppercase;
+    font-size: 18px;
+    font-family: 'Raleway', sans-serif;
+}
+
+.third-body h3 {
+    color: white;
+    font-size: 26px;
+    font-family: 'Lato', sans-serif;
+}
+
+.table>:not(caption)>*>* {
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+    background-color: #063261;
+    color: white;
+}
+
+p.ust1 {
+    text-indent: 20px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 14px;
+}
+
+p.ust3 {
+    padding: 0px 10px 0 210px;
+    color: #014A94;
+    text-indent: 20px;
+    line-height: 1.5;
+}
+
+#div3,
+#div4 p {
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+.dot {
+    height: 10px;
+    width: 10px;
+    background-color: #063261;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.vl {
+    border-left: 6px dotted #063261;
+    height: 20px;
+    position: relative;
+    left: 92%;
+    margin-left: -1.5px;
+    top: 0;
+}
+
+.fifth-body img {
+    width: 200px;
+}

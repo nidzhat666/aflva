@@ -1,0 +1,306 @@
+{% extends 'aeroflot/base.html' %}
+{% block content %}
+    {% load main_tags %}
+    <div class="aircraft-details-body" style="background-color:#e7e9e8;">
+        <div class="container" style="padding-bottom: 100px;min-height:60vh;border-radius: .25rem 0 0 .25rem;">
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="nav-link active" id="nav-profile-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-title"
+                            type="button" role="tab" aria-controls="nav-title" aria-selected="true">
+                        {{ aircraft.aircraft_type.aircraft_name }} ({{ aircraft.aircraft_registration }})
+                    </button>
+                    <button class="nav-link" id="nav-book-tab" data-bs-toggle="tab" data-bs-target="#nav-flights"
+                            type="button" role="tab" aria-controls="nav-flights" aria-selected="false">
+                        Выполненные полеты ({{ aircraft.aircraft_registration }})
+                    </button>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-title" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="row">
+                        <div class="col col-md-4">
+                            {% if aircraft.aircraft_image %}
+                                <img class="rounded" src="{{ aircraft.aircraft_image.url }}" alt=""
+                                     style="width: 100%;">
+                            {% elif aircraft_icao_image %}
+                                <img class="rounded" src="{{ aircraft_icao_image.0.aircraft_image.url }}" alt=""
+                                     style="width: 100%;">
+                            {% endif %}
+                        </div>
+                        <div class="col">
+                            <table class="table" style="margin-bottom:0px">
+                                <tbody>
+                                <tr>
+                                    <td>Локация:</td>
+                                    <td class="border" title="{{ aircraft.now.name }} ({{ aircraft.now.city }})">
+                                        <b>{{ aircraft.now.icao_code }}</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Полетов:</td>
+                                    <td class="border"><b>{{ aircraft.flights }}</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Налет:</td>
+                                    <td class="border"><b>{{ aircraft.hours|convert_hours_minutes }}</b> часов</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Тип двигателя:
+                                    </td>
+                                    <td class="border">
+                                        <b>{{ aircraft.aircraft_type.engine_type }}</b>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table class="table" style="margin-bottom:0px">
+                                <tbody>
+                                <tr>
+                                    <td>Дальность полета:</td>
+                                    <td class="border"><b>{{ aircraft.aircraft_type.flight_range }}</b> NM</td>
+                                </tr>
+                                <tr>
+                                    <td>Эшелон полета:</td>
+                                    <td class="border">FL<b>{{ aircraft.aircraft_type.max_flightlevel }}</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Крейсерская скорость:</td>
+                                    <td class="border"><b>{{ aircraft.aircraft_type.cruise_speed }}</b> kts</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="more-info" style="text-align: center; display:none;">
+                        <div class="row">
+                            <div class="col">
+                                <table class="table">
+                                    <tr>
+                                        <td>Масса пустого</td>
+                                        <td>Масса максимальная</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border"><b>{{ aircraft.aircraft_type.empty_weight }}</b> kgs</td>
+                                        <td class="border"><b>{{ aircraft.aircraft_type.max_weight }}</b> kgs</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col">
+                                <table class="table">
+                                    <tr>
+                                        <td>Масса посадочная</td>
+                                        <td>Запас топлива</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border"><b>{{ aircraft.aircraft_type.landing_weight }}</b> kgs</td>
+                                        <td class="border"><b>{{ aircraft.aircraft_type.fuel }}</b> kgs</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col">
+                                <table class="table">
+                                    <tr>
+                                        <td>Полезная загрузка</td>
+                                        <td>Пассажиры</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border"><b>{{ aircraft.aircraft_type.payload }}</b> kgs</td>
+                                        <td class="border"><b>{{ aircraft.aircraft_type.pax }}</b></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <h4>Ограничения</h4>
+                        <div class="row">
+                            <div class="col">
+                                <table class="table">
+                                    <tr>
+                                        <td>Закрылки 10°:</td>
+                                        <td class="border"><b>{{ aircraft.aircraft_type.aircraft_icao.flaps10 }}</b> kts
+                                        </td>
+                                    <tr>
+                                    <tr>
+                                        <td>Закрылки 15°:</td>
+                                        <td class="border"><b>{{ aircraft.aircraft_type.aircraft_icao.flaps15 }}</b> kts
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Закрылки 35°:</td>
+                                        <td class="border"><b>{{ aircraft.aircraft_type.aircraft_icao.flaps35 }}</b> kts
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="border" style="text-align: right!important; ">Тангаж на
+                                            взлете:
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col">
+                                <table class="table">
+                                    <tr>
+                                        <td>Vmax выпуска шасси:</td>
+                                        <td class="border"><b>{{ aircraft.aircraft_type.aircraft_icao.gear_up }}</b> kts
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Vmax уборки шасси:</td>
+                                        <td class="border"><b>{{ aircraft.aircraft_type.aircraft_icao.gear_down }}</b>
+                                            kts
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Vmax полета с шасси:</td>
+                                        <td class="border"><b>{{ aircraft.aircraft_type.aircraft_icao.gear_cruise }}</b>
+                                            kts
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="border">
+                                            <b>{{ aircraft.aircraft_type.aircraft_icao.max_pitch }}</b>°
+                                        </td>
+
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="show-hide-button" style="text-align: center; cursor:pointer; text-decoration:double">
+                        <span style="color: #4f5150">Детали</span>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-flights" role="tabpanel" aria-labelledby="nav-flights">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th scope="col"># Рейса</th>
+                            <th scope="col" colspan="3">Вылет</th>
+                            <th scope="col" colspan="3">Прилет</th>
+                            <th scope="col">Пилот</th>
+                            <!-- <th scope="col">Время в пути</th> -->
+                            <th scope="col">Дата рейса</th>
+                            <!-- <th scope="col">Статус</th> -->
+                            <th scope="col">Рейтинг</th>
+                        </tr>
+                        </thead>
+                        <tbody class="flights-table">
+                        {% for i in flights %}
+                            <tr>
+                                <td><img src="{{ i.company.logo.url }}" alt="" style="width: 22px;"></td>
+                                <td style="text-align: center!important;">{{ i.callsign }}</td>
+                                <td style="margin: auto;">
+                                    <img style="width: 18px;"
+                                         src="http://afl-va.ru/lib/images/countries/{{ i.departure_airport.country|lower }}.png"
+                                         alt="">
+                                </td>
+                                <td>{{ i.departure_airport.icao_code }}</td>
+                                <td>
+                                    {{ i.departure_airport.name }}
+                                </td>
+                                <td style="margin: auto;">
+                                    <img style="width: 18px;"
+                                         src="http://afl-va.ru/lib/images/countries/{{ i.arrival_airport.country|lower }}.png"
+                                         alt="">
+                                </td>
+                                <td>{{ i.arrival_airport.icao_code }}</td>
+                                <td>{{ i.arrival_airport.name }}</td>
+                                <td style="text-align: center!important;">{{ i.pilot.profile.first_name }}
+                                    {{ i.pilot.profile.last_name }}</td>
+                                <td style="text-align: center!important;">{{ i.dep_time|date:'d.m.Y' }}</td>
+                                {% if i.points < 100 %}
+                                    <td onclick="flight_view({{ i.id }})"
+                                        style="text-align: center!important; color: #ff4a4a!important; cursor:pointer">
+                                        {{ i.points }}</td>
+                                {% else %}
+                                    <td onclick="flight_view({{ i.id }})"
+                                        style="text-align: center!important;color:rgb(0, 160, 0)!important; cursor:pointer">
+                                        {{ i.points }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Детали Полета</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                </div>
+                <div class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+
+        .modal-body td {
+            border: 0;
+        }
+
+        .nav-link {
+            padding: 0.5em 2em;
+            text-transform: uppercase;
+            font-size: 18px;
+        }
+
+        #nav-title td {
+            font-size: 18px;
+            border: none;
+        }
+
+        #nav-flights span,
+        td {
+            color: #4f5150 !important;
+            font-size: 14px;
+            text-align: left !important;
+        }
+
+        #nav-flights th {
+            padding: 5px;
+        }
+    </style>
+    {% csrf_token %}
+    <script>
+        jQuery(document).ready(function () {
+            jQuery('.show-hide-button').on('click', function () {
+                jQuery('.more-info').slideToggle('fast', function () {
+                })
+            })
+            jQuery('button').on('click', function () {
+                hideModal();
+            })
+        })
+
+        function flight_view(flight_id) {
+            $.ajax({
+                type: "POST",
+                url: {% url 'aeroflot:flight_view'%},
+                data: {
+                    csrfmiddlewaretoken: jQuery('input[name=csrfmiddlewaretoken]').val(),
+                    flight_id: flight_id
+                },
+                cache: false,
+                success: function (data) {
+                    jQuery('.modal-body').html(data);
+                    jQuery('.modal').modal('show')
+                }
+            });
+        }
+
+        function hideModal() {
+            $('.modal').modal('hide');
+        };
+    </script>
+    </script>
+{% endblock %}

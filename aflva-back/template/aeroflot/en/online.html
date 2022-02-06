@@ -1,0 +1,129 @@
+{%extends 'aeroflot/en/base.html'%}
+{%load main_tags%}
+{% load static %}
+{%block content%}
+<div class="schedule-body"
+	style="background-color: #e5e5e5;background: url(https://www.toptal.com/designers/subtlepatterns/patterns/white_carbon.png);">
+	<div class="container"
+		style="min-height: 60vh;max-width:1200px;background-color:white; padding-bottom: 10px;box-shadow: 0 0 10px rgb(0 0 0 / 50%);padding-left:0;padding-right:0;">
+		<table class="table table-striped" style="padding:0;">
+			<thead>
+                <th></th>
+                <th>Pilot</th>
+				<th>Flight</th>
+				<th colspan="3">Departure Airport</th>
+				<th colspan="3">Arrival Airport</th>
+				<th>Aircraft</th>
+                <th>Status</th>
+                <th>Level</th>
+                <th>Speed</th>
+				<th>Distance</th>
+			</thead>
+            <tbody aria-live="polite" aria-relevant="all">			
+                
+			</tbody>
+		</table>
+	</div>
+</div>
+<div class="modal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="staticBackdropLabel">Booking Details</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+			</div>
+			<div class="modal-body">
+
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+	td{
+		font-size: 14px;
+	}
+	td a {
+		text-decoration: none;
+	}
+
+	th {
+		font-size: 14px;
+	}
+
+	.table-danger {
+		border-bottom: 1px solid #4f5150;
+	}
+
+	.red::tr {
+		background-color: red;
+	}
+</style>
+<script>
+	jQuery(document).ready(function(){
+		$('.table').tablesorter();
+	})
+    function dist_calculate(lat1, lon1, lat2, lon2) 
+    {
+      var R = 3440.0348679829; // NM
+      var dLat = toRad(lat2-lat1);
+      var dLon = toRad(lon2-lon1);
+      var lat1 = toRad(lat1);
+      var lat2 = toRad(lat2);
+
+      var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+      var d = R * c;
+      return d;
+    }
+
+    function toRad(Value) 
+    {
+        return Value * Math.PI / 180;
+    }
+    function liveRefreshonl()
+    {
+    $.ajax({
+            type: "GET",
+            url: "{% url 'aeroflot:bookings_api' %}",
+            cache: false,
+            success: function(data) 
+            {   
+                var online = jQuery('.table tbody').html('');
+                var tr_online = ''
+                $.each(data, function (i, val) {
+                    if(val['status']!='booked'){
+                        tr_online = tr_online+
+                        '<tr>'+
+                            `<td><img style="width: 22px;" src="${val['company']['logo']}" alt=""></td>`+
+                            `<td title=''>${val['pilot']['profile']['first_name']} ${val['pilot']['profile']['last_name']}</td>`+
+                            `<td title=''>${val['callsign']}</td>`+
+                            `<td style="margin: auto;">
+                                <img style="width: 18px;" src="{% static 'countries/' %}${val['dep_airport']['country'].toLowerCase()}.png" alt="">
+                            </td>`+
+                            `<td title=''>${val['dep_airport']['icao_code']}</td>`+
+                            `<td>${val['dep_airport']['name']}</td>`+
+                            `<td style="margin: auto;">
+                                <img style="width: 18px;" src="{% static 'countries/' %}${val['arr_airport']['country'].toLowerCase()}.png" alt="">
+                            </td>`+
+                            `<td title=''>${val['arr_airport']['icao_code']}</td>`+
+                            `<td>${val['arr_airport']['name']}</td>`+
+                            `<td>${val['aircraft']['aircraft_type']['aircraft_name']}</td>`+
+                            `<td>${val['status']}</td>`+
+                            `<td>${val['altitude']}</td>`+
+                            `<td>${val['speed']}</td>`+
+                            `<td>${Math.floor(dist_calculate(val['latitude'],val['longitude'],val['arr_airport']['latitude'],val['arr_airport']['longitude']))} NM</td>`+
+                        '</tr>'
+
+                    } 
+                });
+                online.html(tr_online)
+            }
+        });
+    };
+    liveRefreshonl();
+    setInterval(function () { liveRefreshonl(); }, 5000);
+</script>
+{% csrf_token %}
+{%endblock%}

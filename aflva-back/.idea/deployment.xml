@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="mirza" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="mirza">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/afl-va" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="root@nzmaslo.ru:22 password">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/root/afl-va" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>

@@ -1,0 +1,101 @@
+{% extends 'aeroflot/base.html' %}
+{% load main_tags %}
+{% block content %}
+    {% load static %}
+    <div class="crew-body"
+         style="background-color: #e5e5e5;background: url(https://www.toptal.com/designers/subtlepatterns/patterns/white_carbon.png);">
+        <div class="container"
+             style="min-height: 60vh;max-width:1200px;background-color:white; padding-bottom: 10px;box-shadow: 0 0 10px rgb(0 0 0 / 50%);padding-left:0;padding-right:0;">
+            <table class="table table-striped" style="padding:0;">
+                <thead>
+                <th>Позывной</th>
+                <th>Флаг</th>
+                <th>Имя Фамилия</th>
+                <th>Ранг</th>
+                <th>Полетов</th>
+                <th>Налет</th>
+                <th>Vatsim</th>
+                <th>Ivao</th>
+                <th>Дата Регистрации</th>
+                <th>Локация</th>
+                <th>Рейтинг</th>
+                </thead>
+                <tbody>
+                {% for i in crew %}
+                    {% with i.profile.profile as profile %}
+                    <tr>
+                        <td>
+                            AFL{{ i.callsign }}
+                        </td>
+                        <td>
+                            <img style="width: 18px;"
+                                 src="{% static 'countries/' %}{{ profile.location|lower }}.png"
+                                 alt="">
+                        </td>
+                        <td>
+                            <a style="text-decoration: none;color: #4f5150 !important;"
+                               href="{% url 'aeroflot:pilot' callsign=i.callsign %}">{{ i.profile.get_full_name}}</a>
+                        </td>
+                        <td>
+                            {% with hours=i.hours|add:i.additional_hours %}
+                                {% with flights=i.flights|add:i.additional_flights %}
+                                    {% if hours|convert_hours < 50 %} <img
+                                            src="{% static 'images/ranks/newhire.png' %}" alt="">
+                                    {% elif hours|convert_hours < 100 %} <img
+                                            src="{% static 'images/ranks/newhire2.png' %}" alt="">
+                                    {% elif hours|convert_hours < 150 %} <img
+                                            src="{% static 'images/ranks/newhire3.png' %}" alt="">
+                                    {% elif hours|convert_hours < 300 %} <img
+                                            src="{% static 'images/ranks/newhire4.png' %}" alt="">
+                                    {% elif hours|convert_hours < 500 %} <img
+                                            src="{% static 'images/ranks/newhire5.png' %}" alt="">
+                                    {% elif hours|convert_hours < 750 %} <img
+                                            src="{% static 'images/ranks/newhire6.png' %}" alt="">
+                                    {% elif hours|convert_hours < 1000 %} <img
+                                            src="{% static 'images/ranks/newhire7.png' %}" alt="">
+                                    {% elif hours|convert_hours < 1300 %} <img
+                                            src="{% static 'images/ranks/newhire8.png' %}" alt="">
+                                    {% elif hours|convert_hours < 1700 %} <img
+                                            src="{% static 'images/ranks/newhire9.png' %}"
+                                            alt="">
+                                    {% else %}
+                                        <img src="{% static 'images/ranks/newhire10.png' %}"
+                                             alt="">
+                                    {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ flights }}
+                                    </td>
+                                    <td>
+                                        {{ hours|convert_hours_minutes }}
+                                    </td>
+                                    <td>
+                                        {{ profile.vatsimid }}
+                                    </td>
+                                    <td>
+                                        {% if profile.ivaoid %}
+                                            {{ profile.ivaoid }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ i.profile.date_joined|date:'d.m.Y' }}
+                                    </td>
+                                    <td>
+                                        {{ profile.now }}
+                                    </td>
+                                    <td>
+                                        {{ i.rating }}
+                                    </td>
+                                {% endwith %}
+                            {% endwith %}
+                        </tr>
+                    {% endwith %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

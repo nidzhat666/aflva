@@ -1,0 +1,144 @@
+{% block content %}
+{% load static %}
+    {% load main_tags %}
+    <div class="report-data" style="text-align: center;">
+        <style>
+        </style>
+        <div style="display: center;">
+            <div class="row">
+                <div class="col" style="text-align: left">
+                    <span style="color: #0d6efd">{{flight.sim_version.name}}</span>
+                </div>
+                <div class="col"><a href="{% url 'aeroflot:pilot' callsign=flight.pilot.callsign %}"
+                                    style="text-decoration: none;">{{ flight.pilot.profile.first_name }} {{ flight.pilot.profile.last_name }}</a></div>
+                <div class="col"></div>
+
+            </div>
+            <div class="row" style="width: auto;">
+                <table class="stat col" style="margin: 10px;">
+                    <tbody>
+                    <tr>
+                        {% if  flight.flightnum %}
+                            <td align="right">Рейс:</td>
+                            <td class="border"><b>{{flight.flightnum}}</b></td>
+                        {% else %}
+                            <td style="color: #0d6efd;" colspan="2"><b>Чартер</b></td>
+                        {% endif %}
+                        <td align="right">Позывной:</td>
+                        <td class="border"><b>{{ flight.callsign }}</b></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Самолет:</td>
+                        <td class="border"><b>{{ aircraft.0.aircraft_type.aircraft_name }}</b></td>
+                        <td align="right">Номер:</td>
+                        <td class="border"><b>{{ aircraft.0.aircraft_registration }}</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Порт вылета:</td>
+                        <td class="border al" colspan="3">
+                            <div align="left"><b> <img title="UA"
+                                                       src="{% static 'countries/' %}{{ flight.departure_airport.country|lower }}.png"
+                                                       alt="{{ flight.departure_airport.icao_code|upper }}">&nbsp;&nbsp;
+                                {{ flight.departure_airport.icao_code|upper }}
+                            </b>&nbsp;&nbsp;{{ flight.departure_airport.name }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">Порт назначения:</td>
+                        <td class="border al" colspan="3">
+                            <div align="left"><b> <img title="UA"
+                                                       src="{% static 'countries/' %}{{ flight.arrival_airport.country|lower }}.png"
+                                                       alt="{{ flight.arrival_airport.icao_code|upper }}">&nbsp;&nbsp;
+                                {{ flight.arrival_airport.icao_code|upper }}
+                            </b>&nbsp;&nbsp;{{ flight.arrival_airport.name }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Время вылета:</td>
+                        <td class="border"><b>{{ flight.dep_time|date:'H:i' }}z</b></td>
+                        <td align="right">Время полета:</td>
+                        <td class="border"><b>&nbsp;{{ flight.flight_time|convert_hours_minutes }}</b></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Время прибытия:</td>
+                        <td class="border"><b>{{ flight.arr_time|date:'H:i' }}z</b></td>
+                        <td align="right">Расстояние:</td>
+                        <td class="border"><b>{{ flight.distance }} NM</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="stat col" style="margin: 10px;">
+                    <tbody>
+                    {% if flight.fuel_used  %}
+                    <tr>
+                        <td align="right">Общая загрузка:</td>
+                        <td class="border"><b>{{ flight.cargo }} кг</b></td>
+                        <td align="right">Исп. топлива:</td>
+                        <td class="border"><b>{{ flight.fuel_used }} кг</b></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Остаток:</td>
+                        <td class="border"><b>{{flight.fuel_left}} кг</b></td>
+                        <td align="right">Масса без топлива:</td>
+                        <td class="border"><b>{{flight.zfw}} кг</b></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Взлётная масса:</td>
+                        <td class="border"><b>{{flight.to_weight}} кг</b></td>
+                        <td align="right">Посадочная масса:</td>
+                        <td class="border"><b>{{flight.landing_weight}} кг</b></td>
+                    </tr>
+                    {%endif%}
+                    <tr>
+                        <td colspan="4"></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Оценка:</td>
+                        <td class="border ar"><b>{{ flight.points }} </b></td>
+                        <td align="right">VS посадки:</td>
+                        <td class="border"><b>{{ flight.landing_vs }}</b></td>
+                    </tr>
+                    <tr>
+                        <td align="center" colspan="4">Маршрут:</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="route border">{{ flight.route }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" class="border">
+                            <font color="black"><b>Прибыл в аэропорт назначения</b></font><br>
+                            {% for i in penalty %}
+                                {% if i.rate < 0 %}
+                                    <font color="red">{{ i.name_ru }}</font><br>
+                                {% else %}
+                                    <font color="navy">{{ i.name_ru }}</font><br>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <style>
+        td.border {
+            text-align: center!important;
+        }
+    </style>
+{% endblock %}

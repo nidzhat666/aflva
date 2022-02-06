@@ -1,0 +1,172 @@
+{%extends 'aeroflot/en/base.html'%}
+{%block content%}
+{%load main_tags%}
+<div class="park-body" style="background: url(https://www.toptal.com/designers/subtlepatterns/patterns/white_carbon.png);">
+    <div class="container" style="min-height: 60vh;">
+        <div class="row justify-content-md-center" style="width: auto;">
+            {%for i in aircraft_types_charter%}
+            <div class="col col-sm-4 col-sm-offset-5">
+                <div class="inner">
+                    <img src="{% for k in images%}{%if k.aircraft_icao.aircraft_icao == i%}{{k.aircraft_image.url}}{%endif%}{% endfor%}"
+                        class="" alt="">
+                    <table class="table table-striped">
+                        <thead>
+                            <!-- <th >tail</th>
+                        <th>type</th>
+                        <th>now</th>
+                        <th>status</th> -->
+                            <th colspan="4" style="border: none!important;font-size:13px;">{{i}}</th>
+                        </thead>
+                        <tbody>
+                            {%for j in fleet_retro%}
+                            {%if j.aircraft_type.aircraft_icao.aircraft_icao == i%}
+                            <tr>
+                                <td>
+                                    <a style="color: #4169e1;"
+                                        href="{% url 'aeroflot:aircraft_details' registration=j.aircraft_registration%}">
+                                        {{j.aircraft_registration}}
+                                    </a>
+                                </td>
+                                <td>{{j.aircraft_type.aircraft_name}}</td>
+                                <td title='{{j.now.name}}, {{j.now.city}}'>{{j.now.icao_code}}</td>
+                                {%if j.id in book%}
+                                <td style="color: red!important;">Booked</td>
+                                {%elif j.id in flight%}
+                                <td style="color: rgb(0, 38, 255)!important;">Flying</td>
+                                {%else%}
+                                <td  onclick="book_flight({{j.id}})" style="color: green!important;cursor:pointer">Available</td>
+                                {%endif%}
+                            </tr>
+                            {%endif%}
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {%endfor%}
+        </div>
+        <div class="row justify-content-md-center" style="width: auto;">
+            {%for i in aircraft_types_active%}
+            <div class="col col-sm-4 col-sm-offset-5">
+                <div class="inner">
+                    <img src="{% for k in images%}{%if k.aircraft_icao.aircraft_icao == i%}{{k.aircraft_image.url}}{%endif%}{% endfor%}"
+                        class="" alt="">
+                    <table class="table table-striped">
+                        <thead>
+
+                            <th colspan="4" style="border: none!important;font-size:13px;">{{i}}</th>
+                        </thead>
+                        <tbody>
+                            {%for j in fleet_active%}
+                            {%if j.aircraft_type.aircraft_icao.aircraft_icao == i%}
+                            <tr>
+                                <td>
+                                    <a style="color: #4169e1;"
+                                        href="{% url 'aeroflot:aircraft_details' registration=j.aircraft_registration%}">
+                                        {{j.aircraft_registration}}
+                                    </a>
+                                </td>
+                                <td>{{j.aircraft_type.aircraft_name}}</td>
+                                <td title='{{j.now.name}}, {{j.now.city}}'>{{j.now.icao_code}}</td>
+                                {%if j.id in book%}
+                                <td style="color: red!important;">Booked</td>
+                                {%elif j.id in flight%}
+                                <td style="color: rgb(0, 38, 255)!important;">Flying</td>
+                                {%else%}
+                                <td  onclick="book_flight({{j.id}})" style="color: green!important;cursor:pointer">Available</td>
+                                {%endif%}
+                            </tr>
+                            {%endif%}
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {%endfor%}
+        </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Booking Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <div class="modal-body">
+                
+                <div style="text-align: center;">
+                </div>
+                <style>
+                    .brief td {
+                        border: none;
+                    }
+                </style>
+            </div>
+        </div>
+    </div>
+</div>
+{% csrf_token %}
+<script> 
+	function book_flight(aircraft_id) {
+        $.ajax({
+			type: "POST",
+			url: {%url 'aeroflot:prebook'%},
+			data: {
+                csrfmiddlewaretoken:jQuery('input[name=csrfmiddlewaretoken]').val(),
+                aircraft:aircraft_id,
+                charter:true
+			},
+			cache: false,
+			success: function(data) {
+                jQuery('.modal-body').html(data);
+                jQuery('.modal').modal('show')
+			}
+		});
+	}
+
+</script>
+<style>
+    .inner img {
+        width: 100%;
+    }
+
+    .park-body {
+        background-image: url(https://www.toptal.com/designers/subtlepatterns/patterns/y-so-serious-white.png);
+        background-color: #e7e9e8;
+    }
+
+    .table th,
+    thead {
+        padding: 3px !important;
+    }
+
+    .table tbody,
+    td {
+        background-color: white;
+        color: black;
+        font-size: 14px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .table a {
+        text-decoration: none;
+    }
+
+    .col.col-sm-4.col-sm-offset-5 {
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 10px;
+    }
+
+    .inner {
+        box-shadow: 0 0 10px rgb(0 0 0 / 50%);
+    }
+
+    .park-body>.container>*>.col {
+        margin: 0px;
+    }
+</style>
+
+{%endblock%}

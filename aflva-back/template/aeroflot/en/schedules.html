@@ -1,0 +1,137 @@
+{% extends 'aeroflot/base.html' %}
+{% load main_tags %}
+{% load static %}
+{% block content %}
+    <div class="schedule-body"
+         style="background-color: #e5e5e5;background: url(https://www.toptal.com/designers/subtlepatterns/patterns/white_carbon.png);">
+        <div class="container"
+             style="min-height: 60vh;max-width:1200px;background-color:white; padding-bottom: 10px;box-shadow: 0 0 10px rgb(0 0 0 / 50%);padding-left:0;padding-right:0;">
+            <table class="table table-striped" style="padding:0;">
+                <thead>
+                <th colspan="2">#</th>
+                <th colspan="3">Departure Airport</th>
+                <th colspan="3">Arrival Airport</th>
+                <th>Dep time</th>
+                <th>Flight time</th>
+                <th>Distance</th>
+                <th>Status</th>
+                </thead>
+                <tbody>
+                {% for schedule in schedules %}
+                    <tr>
+                        <td>
+                            <img style="width: 22px" src="{{ schedule.company.logo.url }}" alt="">
+                        </td>
+                        <td style="text-align: center;">{{ schedule.flightnum }}</td>
+                        <td style="margin: auto;">
+                            <img style="width: 18px;"
+                                 src="{% static 'countries/' %}{{ schedule.dep_icao.country|lower }}.png"
+                                 alt="">
+                        </td>
+                        <td>{{ schedule.dep_icao.icao_code }}</td>
+                        <td>
+                            {{ schedule.dep_icao.name }}
+                        </td>
+                        <td style="margin: auto;">
+                            <img style="width: 18px;"
+                                 src="{% static 'countries/' %}{{ schedule.arr_icao.country|lower }}.png"
+                                 alt="">
+                        </td>
+                        <td>{{ schedule.arr_icao.icao_code }}</td>
+                        <td>{{ schedule.arr_icao.name }}</td>
+                        <td style="text-align: center;">{{ schedule.deptime|date:'H:i' }}</td>
+                        <td style="text-align: center;">{% time_calc schedule.deptime schedule.arrtime %}</td>
+                        <td style="text-align: center;">{{ schedule.distance }} NM</td>
+                        {% if not aircraft %}
+                            {% check_schedule fleet schedule.aircraft_type.all schedule.dep_icao as st %}
+                            {% if st == 'booked' or schedule.book.status == 'booked' %}
+                                <td style="color: red !important;">
+                                    Available
+                                </td>
+                            {% elif st == 'no aircraft' %}
+                                <td style="color: red !important;">
+                                    No Aircraft
+                                </td>
+                            {% elif st == 'free' %}
+                                <td>
+                                    <a style="color: green !important;"
+                                       href="{% url 'aeroflot:fleet' %}?s_id={{ schedule.id }}">Available</a>
+                                </td>
+                            {% endif %}
+                        {% else %}
+                            <td onclick="book_flight({{ schedule.id }})"
+                                style="color: green!important;cursor:pointer">
+                                Available
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Booking Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                </div>
+                <div class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        jQuery(document).ready(function () {
+            $('.table').tablesorter();
+        })
+    </script>
+    <style>
+        td {
+            font-size: 14px;
+        }
+
+        td a {
+            text-decoration: none;
+        }
+
+        th {
+            font-size: 14px;
+        }
+
+        .table-danger {
+            border-bottom: 1px solid #4f5150;
+        }
+
+        .red::tr {
+            background-color: red;
+        }
+    </style>
+    {% csrf_token %}
+    {% if aircraft %}
+        <script>
+            var fleet = {{aircraft.id}};
+
+            function book_flight(schedule_id) {
+                $.ajax({
+                    type: "POST",
+                    url: {%url 'aeroflot:prebook'%},
+                    data: {
+                        csrfmiddlewaretoken: jQuery('input[name=csrfmiddlewaretoken]').val(),
+                        schedule: schedule_id,
+                        aircraft: fleet
+                    },
+                    cache: false,
+                    success: function (data) {
+                        jQuery('.modal-body').html(data);
+                        jQuery('.modal').modal('show')
+                    }
+                });
+            }
+
+        </script>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,32 @@
+{%extends 'aeroflot/en/base.html'%}
+{%block content%}
+<style>
+    .wait-body{
+        padding-top: 10vh;
+        min-height: 60vh;
+    }
+</style>
+<div class="container wait-body text-center">
+    {%if state == "just registred"%}
+    <div class="alert alert-primary" role="alert">
+        <h4 class="alert-heading">Excellent!</h4>
+        <p>You have successfully registered. To send an application to this airline, click on the button below.</p>
+        <hr>
+        <a href="{%url 'aeroflot:request_apply'%}"><button class="btn btn-primary">Join Aeroflot Virtual</button></a>
+      </div>
+    {%elif state == "needs to activate"%}
+    <div class="alert alert-primary" role="alert">
+        <h4 class="alert-heading">Welcome back!</h4>
+        <p>Due to low activity, the administration decided to suspend your pilot activities in the company. To send an application to this airline, click on the button below.</p>
+        <hr>
+        <a href="{%url 'aeroflot:request_apply'%}"><button class="btn btn-primary">Join Aeroflot Virtual</button></a>
+      </div>
+    {%elif state == "waiting"%}
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">It remains to wait a bit!</h4>
+        <p>At the moment, the administration has received a confirmation request and is checks your profile.</p>
+      </div>
+    {%endif%}
+</div>
+
+{%endblock%}

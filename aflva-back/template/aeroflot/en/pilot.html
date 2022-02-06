@@ -1,0 +1,426 @@
+{% extends 'aeroflot/en/base.html' %}
+{% load main_tags %}
+{% load static %}
+{% block content %}
+    <div class="profile-body" style="background-color:#e7e9e8;">
+        <div class="container" style="padding-bottom: 100px;min-height: 60vh;border-radius: .25rem 0 0 .25rem;">
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="nav-link {% if not book %} active {% endif %}" id="nav-profile-tab"
+                            data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
+                            aria-controls="nav-profile" aria-selected="true">User
+                    </button>
+                    <button class="nav-link" id="nav-flights-tab" data-bs-toggle="tab" data-bs-target="#nav-flights"
+                            type="button" role="tab" aria-controls="nav-flights-tab" aria-selected="false">Completed
+                        flights
+                    </button>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show {% if not book %} active show{% endif %}" id="nav-profile"
+                     role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="row gutters-sm">
+                        <div class="col">
+                            <div class="card-body">
+                                <div class="row profile-card">
+                                    <div class="col">
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    Full name
+                                                </td>
+                                                <td>
+                                                    {{ profile.user.first_name }} {{ profile.user.last_name }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Now
+                                                </td>
+                                                <td>
+                                                    {{ profile.now }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Callsign
+                                                </td>
+                                                <td>
+                                                    {{ pilot.callsign }}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col">
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                            {% with hours=pilot.hours|add:pilot.additional_hours %}
+                                                {% with flights=pilot.flights|add:pilot.additional_flights %}
+                                                    <tr>
+                                                        <td>
+                                                            Hours
+                                                        </td>
+                                                        <td style="text-align: center!important;">
+                                                            {{ hours|convert_hours_minutes }} Hours
+                                                        </td>
+                                                        <td style="text-align: center!important;">
+                                                            {{ flights }} Flights
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Rating
+                                                        </td>
+                                                        <td style="text-align: center!important;">
+                                                            {% if hours|convert_hours < 50 %}
+                                                                <img src="http://afl-va.ru/lib/images/ranks/newhire.png"
+                                                                     alt="">
+                                                            {% elif hours|convert_hours < 100 %}
+                                                                <img src="http://afl-va.ru/lib/images/ranks/newhire2.png"
+                                                                     alt="">
+                                                            {% elif hours|convert_hours < 150 %}
+                                                                <img src="http://afl-va.ru/lib/images/ranks/newhire3.png"
+                                                                     alt="">
+                                                            {% elif hours|convert_hours < 300 %}
+                                                                <img src="http://afl-va.ru/lib/images/ranks/newhire4.png"
+                                                                     alt="">
+                                                            {% elif hours|convert_hours < 500 %}
+                                                                <img src="http://afl-va.ru/lib/images/ranks/newhire5.png"
+                                                                     alt="">
+                                                            {% elif hours|convert_hours < 750 %}
+                                                                <img src="http://afl-va.ru/lib/images/ranks/newhire6.png"
+                                                                     alt="">
+                                                            {% elif hours|convert_hours < 1000 %}
+                                                                <img src="http://afl-va.ru/lib/images/ranks/newhire7.png"
+                                                                     alt="">
+                                                            {% elif hours|convert_hours < 1300 %}
+                                                                <img src="http://afl-va.ru/lib/images/ranks/newhire8.png"
+                                                                     alt="">
+                                                            {% elif hours|convert_hours < 1700 %}
+                                                                <img src="http://afl-va.ru/lib/images/ranks/newhire9.png"
+                                                                     alt="">
+                                                            {% else %}
+                                                                <img src="http://afl-va.ru/lib/images/ranks/newhire10.png"
+                                                                     alt="">
+                                                            {% endif %}
+                                                        </td>
+                                                        <td style="text-align: center!important;">
+                                                            {{ pilot.rating }} Rate
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Vatsim ID
+                                                        </td>
+                                                        <td style="text-align: center!important;">
+                                                            {{ profile.vatsimid }}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Ivao ID
+                                                        </td>
+                                                        <td style="text-align: center!important;">
+                                                            {{ profile.ivaoid }}
+                                                        </td>
+                                                    </tr>
+                                                {% endwith %}
+                                            {% endwith %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="stats col">
+                            <canvas id="flownChart"></canvas>
+                        </div>
+                        <div class="col">
+                            <canvas id="favoriteAirportChart"></canvas>
+                        </div>
+                        <div class="col">
+                            <canvas id="flightsStats"></canvas>
+                        </div>
+                    </div>
+                    <script>
+                        new Chart(document.getElementById('flownChart').getContext('2d'), {
+                            type: 'bar',
+                            data: {
+                                labels: [{% for i in flown_countries %}
+                                    {% if i.0.1 != "UUEE"%}'{{ i.0.1 }}',{% endif %} {% endfor %}],
+                                datasets: [{
+                                    data: [{% for i in flown_countries %}{% if i.0.1 != "UUEE"%} {{ i.1 }}, {% endif %} {% endfor %}],
+                                    backgroundColor: [
+                                        'rgba(54, 162, 235, 0.2)',
+                                        'rgba(255, 206, 86, 0.2)',
+                                        'rgba(75, 192, 192, 0.2)',
+                                        'rgba(153, 102, 255, 0.2)',
+                                        'rgba(255, 159, 64, 0.2)',
+                                        'rgba(255, 99, 132, 0.2)',
+                                    ],
+                                    borderColor: [
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)',
+                                        'rgba(255, 99, 132, 1)',
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                indexAxis: 'y',
+                                elements: {
+                                    bar: {
+                                        borderWidth: 2,
+                                    }
+                                },
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Favorite Airports'
+                                    }
+                                }
+                            },
+                        });
+                        new Chart(document.getElementById('favoriteAirportChart').getContext('2d'), {
+                            type: 'bar',
+                            data: {
+                                labels: [{% for i in flown_aircraft %} '{{ i.0 }}',{% endfor %}],
+                                datasets: [{
+                                    data: [{% for i in flown_aircraft %}{{ i.1 }}, {% endfor %}],
+                                    backgroundColor: [
+                                        'rgba(54, 162, 235, 0.2)',
+                                        'rgba(255, 206, 86, 0.2)',
+                                        'rgba(75, 192, 192, 0.2)',
+                                        'rgba(153, 102, 255, 0.2)',
+                                        'rgba(255, 159, 64, 0.2)',
+                                        'rgba(255, 99, 132, 0.2)',
+                                    ],
+                                    borderColor: [
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)',
+                                        'rgba(255, 99, 132, 1)',
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                indexAxis: 'y',
+                                elements: {
+                                    bar: {
+                                        borderWidth: 2,
+                                    }
+                                },
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Favorite Aircrafts'
+                                    }
+                                }
+                            },
+                        });
+                        new Chart(document.getElementById('flightsStats').getContext('2d'), {
+                            type: 'line',
+                            data: {
+                                labels: [
+                                    {% for i in fa %}'{{ month_names|get_index:i.0|get_index_tuple:1 }}', {% endfor %}
+                                ],
+                                datasets: [{
+                                    data: [{% for i in fa %}{{ i.1 }}, {% endfor %}],
+                                    backgroundColor: [
+                                        'rgba(54, 162, 235, 0.2)',
+                                        'rgba(255, 206, 86, 0.2)',
+                                        'rgba(75, 192, 192, 0.2)',
+                                        'rgba(153, 102, 255, 0.2)',
+                                        'rgba(255, 159, 64, 0.2)',
+                                        'rgba(255, 99, 132, 0.2)',
+                                    ],
+                                    borderColor: [
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)',
+                                        'rgba(255, 99, 132, 1)',
+                                    ],
+                                    borderWidth: 1,
+                                    fill: false,
+                                    cubicInterpolationMode: 'monotone',
+                                    tension: 0.4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Month Activity'
+                                    }
+                                },
+                                interaction: {
+                                    intersect: false,
+                                },
+                                scales: {
+                                    x: {
+                                        display: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Month'
+                                        },
+
+                                    },
+                                    y: {
+                                        display: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Flights'
+                                        },
+                                        beginAtZero: true,
+                                    },
+                                }
+                            },
+                        });
+                    </script>
+                </div>
+                <div class="tab-pane fade" id="nav-flights" role="tabpanel" aria-labelledby="nav-flights">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">№ Flight</th>
+                            <th scope="col" colspan="3">Departure</th>
+                            <th scope="col" colspan="3">Arrival</th>
+                            <th scope="col">Aircraft</th>
+                            <!-- <th scope="col">Flight time</th> -->
+                            <th scope="col">Flight date</th>
+                            <!-- <th scope="col">Status</th> -->
+                            <th scope="col">Rate</th>
+                        </tr>
+                        </thead>
+                        <tbody class="flights-table">
+                        {% for i in flights %}
+                            <tr>
+                                <td style="text-align: center!important;">{{ i.callsign }}</td>
+                                <td style="margin: auto;">
+                                    <img style="width: 18px;"
+                                         src="{% static 'countries/' %}{{ i.departure_airport.country|lower }}.png"
+                                         alt="">
+                                </td>
+                                <td>{{ i.departure_airport.icao_code }}</td>
+                                <td>
+                                    {{ i.departure_airport.name }}
+                                </td>
+                                <td style="margin: auto;">
+                                    <img style="width: 18px;"
+                                         src="{% static 'countries/' %}{{ i.arrival_airport.country|lower }}.png"
+                                         alt="">
+                                </td>
+                                <td>{{ i.arrival_airport.icao_code }}</td>
+                                <td>{{ i.arrival_airport.name }}</td>
+                                <td style="text-align: center!important;">{{ i.aircraft_registration }}</td>
+                                <td style="text-align: center!important;">{{ i.dep_time|date:'d.m.Y' }}</td>
+                                {% if i.points < 100 %}
+                                    <td onclick="flight_view({{ i.id }})"
+                                        style="text-align: center!important; color: #ff4a4a!important; cursor:pointer">{{ i.points }}</td>
+                                {% else %}
+                                    <td onclick="flight_view({{ i.id }})"
+                                        style="text-align: center!important;color:rgb(0, 160, 0)!important; cursor:pointer">{{ i.points }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Flight Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                </div>
+                <div class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .modal-body td {
+            border: 0;
+        }
+
+        .nav-link {
+            padding: 0.5em 2em;
+            text-transform: uppercase;
+            font-size: 18px;
+        }
+
+
+        #nav-flights span,
+        td {
+            color: #4f5150 !important;
+            font-size: 14px;
+            text-align: left !important;
+        }
+
+        #nav-flights th {
+            padding: 5px;
+        }
+
+        .profile-card td {
+            border: none;
+            font-size: 18px;
+        }
+    </style>
+    {% csrf_token %}
+    <script>
+        jQuery(document).ready(function (param) {
+            jQuery('button').on('click', function () {
+                hideModal();
+            })
+        })
+
+        function flight_view(flight_id) {
+            $.ajax({
+                type: "POST",
+                url: {%url 'aeroflot:flight_view'%},
+                data: {
+                    csrfmiddlewaretoken: jQuery('input[name=csrfmiddlewaretoken]').val(),
+                    flight_id: flight_id
+                },
+                cache: false,
+                success: function (data) {
+                    jQuery('.modal-body').html(data);
+                    jQuery('.modal').modal('show')
+                }
+            });
+        }
+
+        function hideModal() {
+            $('.modal').modal('hide');
+        };
+    </script>
+{% endblock %}

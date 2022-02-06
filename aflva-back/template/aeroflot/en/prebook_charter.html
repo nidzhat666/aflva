@@ -1,0 +1,144 @@
+{%load main_tags%}
+<form action="{%url 'aeroflot:charter_booking'%}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name='fleet' value="{{fleet.id}}">
+    <table class="table brief">
+        <tbody>
+            <tr>
+                <td align="right">Flight №</td>
+                <td class="border"><b>{{ fleet.company.icao }}{%check_pilot request.user%}</b></td>
+                <!-- <input type="hidden" name = 'flightnum' value="{{schedule.flightnum}}"> -->
+                <!-- <input type="hidden" name = 'callsign' value="{{schedule.callsign}}"> -->
+                <td align="right">Alternate airport:</td>
+                <td class="border al">
+                    <div align="left">
+                        <input name="altrn" maxlength="4"
+                            style="text-align:center;display:inline-block;text-transform: uppercase;font-weight: bold;height: 30px;border:none;"
+                            class="form-control" type="text" class="form-control" value="" required></b>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">Departure airport:</td>
+                <td class="border al">
+                    <input name="depapt" maxlength="4"
+                        style="text-align:center;display:inline-block;text-transform: uppercase;font-weight: bold;height: 30px;border:none;"
+                        class="form-control" type="text" class="form-control" value="{{fleet.now.icao_code}}" readonly="readonly" required>
+                </td>
+                <td align="right">Destination airport:</td>
+                <td class="border al">
+                    <div align="left">
+                        <input name="arrapt" maxlength="4"
+                            style="text-align:center;display:inline-block;text-transform: uppercase;font-weight: bold;height: 30px;border:none;"
+                            class="form-control" type="text" class="form-control" value="" required>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">Departure time:</td>
+                <td class="border">
+                    <b><input pattern="[0-2][0-9][0-5][0-9]" name="deptime" maxlength="4"
+                        style="text-align:center;display:inline-block;text-transform: uppercase;font-weight: bold;height: 30px;border:none;"
+                        class="form-control" type="text" class="form-control" value="" required>
+                    </b>
+                </td>
+                <td align="right">Flight time:</td>
+                <td class="border">
+                    <b><input pattern="[0-2][0-9][0-5][0-9]" name="flight_time" maxlength="4"
+                        style="text-align:center;display:inline-block;text-transform: uppercase;font-weight: bold;height: 30px;border:none;"
+                        class="form-control" type="text" class="form-control" value="" required>
+                    </b>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">Flight level</td>
+                <td class="border">
+                    <div class="row">
+                        <div class="col-auto" style="margin: auto;">
+                            FL
+                        </div>
+                        <div class="col">
+                            <b><input pattern="[0-9]+" name="flight_level" maxlength="3"
+                                    style="text-align:center;display:inline-block;text-transform: uppercase;font-weight: bold;height: 30px;border:none;"
+                                    class="form-control" type="text" class="form-control" value="" required>
+                            </b>
+                        </div>
+                    </div>
+                </td>
+                <td align="right">Distance in miles</td>
+                <td class="border">
+                    <div class="row">
+                        <div class="col-auto" style="margin: auto;">
+                            NM
+                        </div>
+                        <div class="col">
+                            <b><input pattern="[0-9]+"  name="distance" maxlength="5"
+                                    style="text-align:center;display:inline-block;text-transform: uppercase;font-weight: bold;height: 30px;border:none;"
+                                    class="form-control" type="text" class="form-control" value="" required>
+                            </b>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">Aircraft type</td>
+                <td class="border">{{fleet.aircraft_type.aircraft_name}}</td>
+                <td align="right">Tail №</td>
+                <td class="border">{{fleet.aircraft_registration}}<b></b></td>
+            </tr>
+            <tr>
+                <td align="right">Payload</td>
+                <td class="border">
+                    <div class="row">
+                        <div class="col-auto" style="margin: auto;">
+                            kg
+                        </div>
+                        <div class="col">
+                            <b><input max='{{fleet.aircraft_type.max_weight}}'   name="cargo" maxlength="5"
+                                    style="text-align:center;display:inline-block;text-transform: uppercase;font-weight: bold;height: 30px;border:none;"
+                                    class="form-control" type="number" class="form-control" value="" required>
+                            </b>
+                        </div>
+                    </div>
+                </td>
+                <td align="right">Passengers on board</td>
+                <td class="border">
+                    <div class="row">
+                        <div class="col-auto" style="margin: auto;">
+                            people.
+                        </div>
+                        <div class="col">
+                            <b><input max='{{fleet.aircraft_type.pax}}'  name="pax" maxlength="3"
+                                    style="text-align:center;display:inline-block;text-transform: uppercase;font-weight: bold;height: 30px;border:none;"
+                                    class="form-control" type="number" class="form-control" value="" required>
+                            </b>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align: center!important;">Route:</td>
+            </tr>
+            <tr>
+                <td colspan="4" class="route border" style="text-align: center!important;">
+
+                    <b><input name="route"
+                            style="display:inline-block;text-transform: uppercase;font-weight: bold;height: 30px;border:none;"
+                            class="form-control" type="taxtarea" class="form-control" value="{{schedule.route}}"
+                            required></b>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="text-align: center;">
+        <input type="submit" class="btn btn-primary active" style=" background-color: #022f68; border-radius: 20px;"
+            value="Book a flight">
+    </div>
+</form>
+<div style="text-align: center;">
+</div>
+<style>
+    .brief td {
+        border: none;
+    }
+</style>
