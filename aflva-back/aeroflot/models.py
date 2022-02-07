@@ -6,10 +6,17 @@ from airac.models import Airport
 from main.scripts import dist_calculate
 from django.contrib.auth.models import User
 from django.db.models import Sum
-import datetime
+from storages.backends.s3boto3 import S3Boto3Storage
+import datetime, os
 
 
 # Create your models here.
+
+def get_file_path_company(instance, filename):
+    ext = filename.split('.')[-1]
+    return os.path.join(
+        f'uploads/company/{instance.name}.{ext}')
+
 
 class Company(models.Model):
     name = models.CharField(default='Aeroflot', max_length=10)
@@ -17,7 +24,7 @@ class Company(models.Model):
     icao = models.CharField(default='AFL', max_length=10)
     iata = models.CharField(default='SU', max_length=10)
     hub = models.CharField(default='UUEE', max_length=10)
-    logo = models.ImageField(blank=True, null=True)
+    logo = models.ImageField(storage=S3Boto3Storage(), upload_to=get_file_path_company)
     hours = models.IntegerField(editable=0, default=0)
     flights = models.IntegerField(editable=0, default=0)
 
@@ -77,12 +84,18 @@ class Pilot(models.Model):
         return self.callsign
 
 
+def get_file_path_fleet(instance, filename):
+    ext = filename.split('.')[-1]
+    return os.path.join(
+        f'uploads/fleet/{instance.aircraft_registration}.{ext}')
+
+
 class Fleet(models.Model):
     company = models.ForeignKey(Company, related_name='fleet', on_delete=models.PROTECT)
     STATUS_CHOISE = (('Inactive', 'Inactive'), ('Active', 'Active'), ('Stored', 'Stored'), ('Retro', 'Retro'))
     aircraft_type = models.ForeignKey(AircraftType, related_name='fleet', on_delete=models.CASCADE)
     aircraft_registration = models.CharField(max_length=10, verbose_name='Aircraft Registration', unique=True)
-    aircraft_image = models.ImageField(upload_to="aeroflot/fleet_images/", blank=True)
+    aircraft_image = models.ImageField(storage=S3Boto3Storage(), upload_to=get_file_path_fleet)
     status = models.CharField(max_length=100, choices=STATUS_CHOISE, default=STATUS_CHOISE[0][0])
     now = models.ForeignKey(Airport, on_delete=models.PROTECT, related_name='fleet', null=True,
                             help_text='Example: UUEE')
@@ -117,10 +130,16 @@ class Fleet(models.Model):
         return self.aircraft_registration
 
 
+def get_file_path_ai(instance, filename):
+    ext = filename.split('.')[-1]
+    return os.path.join(
+        f'uploads/ai/{instance.company.icao}_{instance.aircraft_icao}.{ext}')
+
+
 class AircraftImage(models.Model):
     company = models.ForeignKey(Company, on_delete=models.PROTECT)
     aircraft_icao = models.ForeignKey(AircraftICAO, on_delete=models.CASCADE, related_name='aircraft_image')
-    aircraft_image = models.ImageField(upload_to="aeroflot/aircraft_icao/", blank=True, help_text="Image Size: 360x180")
+    aircraft_image = models.ImageField(storage=S3Boto3Storage(), upload_to=get_file_path_ai)
 
     class Meta:
         verbose_name = 'Aircraft ICAO Image'

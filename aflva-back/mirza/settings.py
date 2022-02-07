@@ -158,3 +158,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 AVWX_TOKEN = os.environ.get('AVWX_TOKEN')
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+
+AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_S3_USE_SSL = os.environ.get('AWS_USE_HTTPS', 'False') == 'True'
+AWS_S3_REGION_NAME = os.environ.get('AWS_REGION', 'us-east-1')
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_FILE_OVERWRITE = True
