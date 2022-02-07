@@ -212,8 +212,8 @@ class Book(models.Model):
     deptime = models.TimeField(verbose_name='Departure Time', help_text='Example: 11:00', blank=True, null=True)
     flight_time = models.TimeField()
     flight_type = models.CharField(max_length=100, blank=True, editable=False)
-    pax = models.IntegerField(null=True)
-    cargo = models.IntegerField(null=True)
+    pax = models.IntegerField(null=True,blank=True,)
+    cargo = models.IntegerField(null=True,blank=True,)
     status = models.CharField(max_length=100, blank=True, null=True)
     altitude = models.IntegerField(null=True)
     speed = models.IntegerField(null=True)
@@ -239,7 +239,7 @@ class Book(models.Model):
 
 class Flight(models.Model):
     company = models.ForeignKey(Company, on_delete=models.PROTECT, null=True, blank=True)
-    pilot = models.ForeignKey(Pilot, on_delete=models.PROTECT, related_name='flight')
+    pilot = models.ForeignKey(Pilot, on_delete=models.PROTECT, related_name='flight', null=True, blank=True)
     flightnum = models.CharField(max_length=100, help_text='Example: SU123', verbose_name='Flight Number', blank=True,
                                  null=True)
     callsign = models.CharField(max_length=100, help_text='Example: AFL123', verbose_name='Callsign', null=True, blank=True)

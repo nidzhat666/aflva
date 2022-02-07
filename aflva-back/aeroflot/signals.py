@@ -5,8 +5,9 @@ from .models import Flight, Fleet
 
 
 @receiver(post_save, sender=Flight)
-def api_call_handler(sender, **kwargs):
+def flight_post_save(sender, **kwargs):
     instance = kwargs.get('instance')
-    obj = Fleet.objects.filter(aircraft_registration=instance.aircraft_registration).first()
-    obj.now = instance.arrival_airport
-    obj.save()
+    if instance.arrival_airport:
+        obj = Fleet.objects.filter(aircraft_registration=instance.aircraft_registration).first()
+        obj.now = instance.arrival_airport
+        obj.save()

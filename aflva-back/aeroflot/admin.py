@@ -146,6 +146,7 @@ class AdminFlight(admin.ModelAdmin):
     model = Flight
     search_fields = ('pilot__callsign', 'flightnum')
     list_display = ('callsign', 'pilot')
+    readonly_fields = ('fsuipc_data',)
 
 
 admin.site.register(Flight, AdminFlight)
