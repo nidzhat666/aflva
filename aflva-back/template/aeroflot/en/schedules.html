@@ -43,7 +43,7 @@
                         <td style="text-align: center;">{% time_calc schedule.deptime schedule.arrtime %}</td>
                         <td style="text-align: center;">{{ schedule.distance }} NM</td>
                         {% if not aircraft %}
-                            {% check_schedule fleet schedule.aircraft_type.all schedule.dep_icao as st %}
+                            {% check_schedule fleet schedule.aircraft_type.all schedule.dep_icao schedule.company.id as st %}
                             {% if st == 'booked' or schedule.book.status == 'booked' %}
                                 <td style="color: red !important;">
                                     Available
