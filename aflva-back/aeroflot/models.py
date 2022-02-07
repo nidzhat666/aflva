@@ -5,7 +5,6 @@ from main.models import Profile, AircraftType, AircraftICAO, Penalty, SimVersion
 from airac.models import Airport
 from main.scripts import dist_calculate
 from django.contrib.auth.models import User
-from django.db.models import Sum
 from storages.backends.s3boto3 import S3Boto3Storage
 import datetime, os
 
