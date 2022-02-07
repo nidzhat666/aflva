@@ -21,10 +21,14 @@ class AdminPilot(admin.ModelAdmin):
 admin.site.register(Pilot, AdminPilot)
 
 
+class AircraftImageInline(admin.TabularInline):
+    model = AircraftImage
+
+
 class AdminCompany(admin.ModelAdmin):
     model = Company
     list_display = ('name', 'icao', 'iata', 'hub', 'logo')
-
+    inlines = [AircraftImageInline]
     # def has_add_permission(self, request):
     #     return False
     # def has_change_permission(self, request, obj=None):
@@ -44,14 +48,6 @@ class AdminFleet(admin.ModelAdmin):
 
 
 admin.site.register(Fleet, AdminFleet)
-
-
-class AdminAircraftImage(admin.ModelAdmin):
-    model = AircraftImage
-    list_display = ('aircraft_icao', 'company', 'aircraft_image')
-
-
-admin.site.register(AircraftImage, AdminAircraftImage)
 admin.site.register((News,))
 
 
