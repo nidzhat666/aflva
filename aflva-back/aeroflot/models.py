@@ -133,7 +133,7 @@ class Fleet(models.Model):
 def get_file_path_ai(instance, filename):
     ext = filename.split('.')[-1]
     return os.path.join(
-        f'uploads/ai/{instance.company.icao}_{instance.aircraft_icao}.{ext}')
+        f'uploads/ai/{instance.company.icao}/{instance.aircraft_icao}.{ext}')
 
 
 class AircraftImage(models.Model):
