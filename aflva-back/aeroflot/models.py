@@ -31,7 +31,7 @@ class Company(models.Model):
         return self.name
 
     class Meta:
-        verbose_name_plural = "1. Company"
+        verbose_name_plural = "Company"
 
 
 class Pilot(models.Model):
@@ -77,7 +77,7 @@ class Pilot(models.Model):
         return self._rating
 
     class Meta:
-        verbose_name_plural = "2. Pilots"
+        verbose_name_plural = "Pilots"
 
     def __str__(self):
         return self.callsign
@@ -123,7 +123,7 @@ class Fleet(models.Model):
         return self._hours
 
     class Meta:
-        verbose_name_plural = "3. Fleet"
+        verbose_name_plural = "Fleet"
 
     def __str__(self):
         return self.aircraft_registration
@@ -141,8 +141,7 @@ class AircraftImage(models.Model):
     aircraft_image = models.ImageField(storage=S3Boto3Storage(), upload_to=get_file_path_ai)
 
     class Meta:
-        verbose_name = 'Aircraft ICAO Image'
-        verbose_name_plural = "4. Aircraft ICAO Image"
+        verbose_name = 'Aircraft Type Image'
         unique_together = ('aircraft_icao', 'company',)
 
     def __str__(self):
@@ -177,7 +176,7 @@ class Schedule(models.Model):
     payload_percentage = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], null=True)
 
     class Meta:
-        verbose_name_plural = "5. Schedule"
+        verbose_name_plural = "Schedule"
 
     def __str__(self):
         return self.flightnum + ' - ' + self.callsign
@@ -270,7 +269,7 @@ class Flight(models.Model):
     fsuipc_data = models.JSONField(null=True)
 
     class Meta:
-        verbose_name_plural = "7. Flight"
+        verbose_name_plural = "Flight"
 
     # def save(self, *args, **kwargs):
     #     super(Flight, self).save(*args, **kwargs)
@@ -291,7 +290,7 @@ class News(models.Model):
         return self.date.strftime("%d %B, %Y")
 
     class Meta:
-        verbose_name_plural = "6. News"
+        verbose_name_plural = "News"
 
 # class Stand(models.Model):
 #     company = models.ForeignKey(Company, on_delete=models.PROTECT)

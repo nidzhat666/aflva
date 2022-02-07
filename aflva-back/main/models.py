@@ -32,7 +32,7 @@ class AircraftICAO(models.Model):
         return self.aircraft_icao
 
     class Meta:
-        verbose_name = 'Aircraft ICAO'
+        verbose_name = 'Aircraft Type'
 
 
 class AircraftType(models.Model):
