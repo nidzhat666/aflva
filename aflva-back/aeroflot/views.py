@@ -183,6 +183,9 @@ def fleet(request):
     icao = fleet.values_list('aircraft_type__aircraft_icao__aircraft_icao',
                              'aircraft_type__aircraft_icao__aircraft_image__aircraft_image').distinct() \
         .order_by('-status', 'aircraft_type__aircraft_icao__aircraft_icao')
+    from storages.backends.s3boto3 import S3Boto3Storage
+    icao = [(i[0], S3Boto3Storage().url(i[1]))
+            for i in icao]
     schedule_avail = Schedule.objects.select_related('dep_icao', 'book', 'company') \
         .prefetch_related('aircraft_type', 'aircraft_type__aircraft_icao')
     schedule_avail = schedule_avail.filter(**schedule_filter).values_list('dep_icao__icao_code',
