@@ -162,10 +162,9 @@ def get_profile(user_id):
 
 @register.simple_tag()
 def get_companies(retro=False):
+    companies = Company.objects.filter(fleet__isnull=True).order_by('name')
     if retro:
-        companies = Company.objects.filter(fleet__status='Retro').exclude(fleet__isnull=True).order_by('name').distinct()
-        return companies
-    companies = Company.objects.all()
+        companies = companies.filter(fleet__status='Retro').distinct()
     return companies
 
 
