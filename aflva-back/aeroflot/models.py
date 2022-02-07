@@ -31,7 +31,7 @@ class Company(models.Model):
         return self.name
 
     class Meta:
-        verbose_name_plural = "Company"
+        verbose_name_plural = "Companies"
 
 
 class Pilot(models.Model):
@@ -269,7 +269,7 @@ class Flight(models.Model):
     fsuipc_data = models.JSONField(null=True)
 
     class Meta:
-        verbose_name_plural = "Flight"
+        verbose_name_plural = "Flights"
 
     # def save(self, *args, **kwargs):
     #     super(Flight, self).save(*args, **kwargs)
