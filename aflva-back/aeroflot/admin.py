@@ -29,10 +29,7 @@ class AdminCompany(admin.ModelAdmin):
     model = Company
     list_display = ('name', 'icao', 'iata', 'hub', 'logo')
     inlines = [AircraftImageInline]
-    # def has_add_permission(self, request):
-    #     return False
-    # def has_change_permission(self, request, obj=None):
-    #     return False
+
     def has_delete_permission(self, request, obj=None):
         return False
 
@@ -62,6 +59,7 @@ class AdminSchedule(admin.ModelAdmin):
     autocomplete_fields = ['dep_icao', 'arr_icao', 'alternate_icao']
     list_filter = ("company", "aircraft_type")
     list_display = ('flightnum', 'callsign', 'dep_icao', 'arr_icao', 'distance', 'deptime', 'arrtime')
+    search_fields = ('dep_icao__', )
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
         if db_field.name == 'aircraft_type':

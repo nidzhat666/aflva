@@ -4,6 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 from rest_framework.authtoken.models import TokenProxy
 from main.models import Profile, AircraftICAO, AircraftType, Agent, Penalty, SimVersion
 
+
 # Register your models here.
 
 # admin.site.unregister(User)
@@ -20,9 +21,6 @@ from main.models import Profile, AircraftICAO, AircraftType, Agent, Penalty, Sim
 #         return False
 
 # admin.site.register(User,CustomUserAdmin)
-
-
-admin.site.unregister(TokenProxy)
 
 
 class ProfileAdmin(admin.ModelAdmin):
