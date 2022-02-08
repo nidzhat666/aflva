@@ -28,13 +28,13 @@ class FlightViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     def perform_create(self, serializer):
         defaults = dict()
-        fsuipc_data = self.request.data
+        fsuipc_data = self.request.data.get('fsuipc_data')
         if book := Book.objects.filter(id=fsuipc_data.get('book')).first():
             defaults['company'] = book.company if getattr(book, 'company') else None
             defaults['flightnum'] = book.schedule.flightnum if getattr(book, 'schedule') else None
             defaults['callsign'] = book.schedule.flightnum if getattr(book, 'schedule') else None
-            # defaults['aircraft_type'] = book.aircraft.aircraft_type.aircraft_name if getattr(book, 'aircraft') else None
-            # defaults['aircraft_registration'] = book.aircraft.aircraft_type.aircraft_name if getattr(book, 'aircraft') else None
+            defaults['aircraft_type'] = book.aircraft.aircraft_type.aircraft_name if getattr(book, 'aircraft') else None
+            defaults['aircraft_registration'] = book.aircraft.aircraft_type.aircraft_name if getattr(book, 'aircraft') else None
             defaults['departure_airport'] = book.dep_airport if getattr(book, 'dep_airport') else None
             defaults['arrival_airport'] = book.arr_airport if getattr(book, 'arr_airport') else None
             defaults['route'] = book.route if getattr(book, 'route') else None
