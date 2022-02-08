@@ -1,7 +1,6 @@
 import {createStore} from 'vuex'
 import {userService} from '../services/user.service'
 import {bookService} from '../services/book.service'
-import keytar from 'keytar'
 
 
 export default createStore({
@@ -32,14 +31,8 @@ export default createStore({
                 user => {
                     commit('setUserErrorStatus', null)
                     commit('loginRequest', user)
-                    keytar.findCredentials('afl').then(
-                        async credentials => {
-                            for (let i in credentials) {
-                                await keytar.deletePassword('afl', credentials[i].account)
-                            }
-                            keytar.setPassword('afl', data.email_or_username, String(data.password))
-                        }
-                    )
+                    localStorage.email = data.email_or_username
+                    localStorage.password = data.password
                     return
                 },
                 error => {
