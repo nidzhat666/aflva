@@ -34,7 +34,7 @@ class FlightViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             defaults['flightnum'] = book.schedule.flightnum if getattr(book, 'schedule') else None
             defaults['callsign'] = book.schedule.flightnum if getattr(book, 'schedule') else None
             defaults['aircraft_type'] = book.aircraft.aircraft_type.aircraft_name if getattr(book, 'aircraft') else None
-            defaults['aircraft_registration'] = book.aircraft.aircraft_type.aircraft_name if getattr(book, 'aircraft') else None
+            defaults['aircraft_registration'] = book.aircraft.aircraft_registration if getattr(book, 'aircraft') else None
             defaults['departure_airport'] = book.dep_airport if getattr(book, 'dep_airport') else None
             defaults['arrival_airport'] = book.arr_airport if getattr(book, 'arr_airport') else None
             defaults['route'] = book.route if getattr(book, 'route') else None
