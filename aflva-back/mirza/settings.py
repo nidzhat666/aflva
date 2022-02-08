@@ -77,7 +77,8 @@ MIDDLEWARE = [
     'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware'
 ]
 DRF_API_LOGGER_DATABASE = True
-DRF_API_LOGGER_SKIP_URL_NAME = ['bookings_api', 'book_status_api', 'books-detail']
+DRF_API_LOGGER_SKIP_URL_NAME = ['bookings_api', 'book_status_api',
+                                'books-detail', 'book_api']
 
 DRF_API_LOGGER_EXCLUDE_KEYS = ['password', ]
 
