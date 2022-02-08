@@ -71,5 +71,8 @@ export default {
     margin: 0 auto;
     transition: opacity 1s ease-out;
   }
+  label{
+    font-weight: bold;
+  }
 }
 </style>
