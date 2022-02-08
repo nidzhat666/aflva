@@ -4,6 +4,13 @@ from django.dispatch import receiver
 from .models import Flight, Fleet
 
 
+# @receiver(pre_save, sender=Flight)
+# def flight_pre_save(sender, instance, *args, **kwargs):
+#     print('signal0')
+#     instance.flight_number = 'SU123'
+#     return instance
+
+
 @receiver(post_save, sender=Flight)
 def flight_post_save(sender, **kwargs):
     instance = kwargs.get('instance')

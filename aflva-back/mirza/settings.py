@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'django_cleanup',
     'rest_framework',
     'silk',
-    'drf_yasg'
+    'drf_yasg',
+    'drf_api_logger'
 ]
 
 REST_FRAMEWORK = {
@@ -72,8 +73,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'silk.middleware.SilkyMiddleware'
+    'silk.middleware.SilkyMiddleware',
+    'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware'
 ]
+DRF_API_LOGGER_DATABASE = True
+DRF_API_LOGGER_SKIP_URL_NAME = ['bookings_api', ]
+
+DRF_API_LOGGER_EXCLUDE_KEYS = ['password', ]
 
 ROOT_URLCONF = 'mirza.urls'
 

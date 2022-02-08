@@ -10,11 +10,6 @@ class BookShortSerializer(serializers.ModelSerializer):
 
 
 class FlightSerializer(serializers.ModelSerializer):
-    pilot = serializers.PrimaryKeyRelatedField(
-        read_only=True,
-        default=serializers.CurrentUserDefault()
-    )
-
     class Meta:
         model = Flight
-        fields = ['fsuipc_data', 'pilot']
+        fields = '__all__'
