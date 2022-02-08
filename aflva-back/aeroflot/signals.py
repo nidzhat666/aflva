@@ -18,3 +18,5 @@ def flight_post_save(sender, **kwargs):
         obj = Fleet.objects.filter(aircraft_registration=instance.aircraft_registration).first()
         obj.now = instance.arrival_airport
         obj.save()
+    if hasattr(instance.pilot, 'book'):
+        instance.pilot.book.delete()
