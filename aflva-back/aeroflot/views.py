@@ -82,7 +82,8 @@ def get_bookings(request):
 @auth_check
 def main(request):
     prev_month = (datetime.datetime.now() - relativedelta(months=1)).month
-    top_pilots = Pilot.objects.filter(flight__dep_time__month=prev_month).select_related('profile') \
+    top_pilots = Pilot.objects.filter(flight__dep_time__month=prev_month, flight__points__isnull=False) \
+                     .select_related('profile') \
                      .prefetch_related('flight') \
                      .annotate(flight_count=Count('flight'),
                                average_rating=Cast(Avg('flight__points'), IntegerField())) \
