@@ -30,13 +30,13 @@ class FlightViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         defaults = dict()
         fsuipc_data = self.request.data
         if book := Book.objects.filter(id=fsuipc_data.get('book')).first():
-            defaults['company'] = book.company.id if getattr(book, 'company') else None
+            defaults['company'] = book.company if getattr(book, 'company') else None
             defaults['flightnum'] = book.schedule.flightnum if getattr(book, 'schedule') else None
             defaults['callsign'] = book.schedule.flightnum if getattr(book, 'schedule') else None
-            defaults['aircraft_type'] = book.aircraft.aircraft_type.aircraft_name if getattr(book, 'aircraft') else None
-            defaults['aircraft_registration'] = book.aircraft.aircraft_type.aircraft_name if getattr(book, 'aircraft') else None
-            defaults['departure_airport'] = book.dep_airport.id if getattr(book, 'dep_airport') else None
-            defaults['arrival_airport'] = book.arr_airport.id if getattr(book, 'arr_airport') else None
+            # defaults['aircraft_type'] = book.aircraft.aircraft_type.aircraft_name if getattr(book, 'aircraft') else None
+            # defaults['aircraft_registration'] = book.aircraft.aircraft_type.aircraft_name if getattr(book, 'aircraft') else None
+            defaults['departure_airport'] = book.dep_airport if getattr(book, 'dep_airport') else None
+            defaults['arrival_airport'] = book.arr_airport if getattr(book, 'arr_airport') else None
             defaults['route'] = book.route if getattr(book, 'route') else None
             defaults['pax'] = book.pax if getattr(book, 'pax') else None
             defaults['cargo'] = book.pax if getattr(book, 'cargo') else None
