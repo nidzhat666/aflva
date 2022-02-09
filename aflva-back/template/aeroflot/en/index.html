@@ -460,7 +460,7 @@
                         {% for i in news %}
                             <div class="border-bottom">
                                 <h4>{{ i.date|date:'d.m.Y' }}</h4>
-                                <p>{{ i.text_en }}</p>
+                                <p>{{ i.text_en| urlize }}</p>
                             </div>
                         {% endfor %}
                     {% else %}

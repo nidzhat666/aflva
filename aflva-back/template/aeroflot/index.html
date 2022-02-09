@@ -481,7 +481,7 @@
                         {% for i in news %}
                             <div class="border-bottom">
                                 <h4>{{ i.date|date:'d.m.Y' }}</h4>
-                                <p>{{ i.text_ru }}</p>
+                                <p>{{ i.text_ru| urlize }}</p>
                             </div>
                         {% endfor %}
                     {% else %}
