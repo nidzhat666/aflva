@@ -64,9 +64,9 @@ export default {
   created() {
     this.auth_data.email_or_username = localStorage.email
     this.auth_data.password = localStorage.password
-    axios.get('https://api.github.com/repos/nidzhat666/aflva-client/releases')
+    axios.get('https://api.github.com/repos/nidzhat666/aflva-client/releases/latest')
         .then((res) => {
-          let latest = res.data[0]
+          let latest = res.data
           if (latest.tag_name !== 'v' + version) {
             this.update = {
               version: latest.tag_name,
