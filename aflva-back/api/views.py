@@ -40,11 +40,7 @@ class FlightViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             defaults['route'] = book.route if getattr(book, 'route') else None
             defaults['pax'] = book.pax if getattr(book, 'pax') else None
             defaults['cargo'] = book.pax if getattr(book, 'cargo') else None
-        defaults['dep_time'] = fsuipc_data.get('dep_time')
-        defaults['arr_time'] = fsuipc_data.get('arr_time')
-        defaults['flight_time'] = fsuipc_data.get('flight_time')
         defaults['distance'] = fsuipc_data.get('distance_flown')
-        defaults['landing_vs'] = fsuipc_data.get('landing_vs')
         defaults['points'] = 120
         defaults['fuel_used'] = fsuipc_data.get('dep_fuel') - fsuipc_data.get('fuel') \
             if isinstance(fsuipc_data.get('dep_fuel'), int) and isinstance(fsuipc_data.get('fuel'), int) else None
@@ -53,7 +49,7 @@ class FlightViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         defaults['to_weight'] = fsuipc_data.get('dep_tw')
         defaults['landing_weight'] = fsuipc_data.get('tw')
         defaults['pilot'] = self.request.user.pilot.id
-        serializer = self.get_serializer(data={**request.data, **defaults})
+        serializer = self.get_serializer(data={**request.data, **defaults, **fsuipc_data})
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
