@@ -18,13 +18,14 @@
       <button type="submit" class="btn btn-primary" :disabled="!submit_button">Submit</button>
     </form>
     <div class="footer">
-      <span>Sky Planet FDR v2.0</span>
+      <span>Sky Planet FDR v{{version}}</span>
     </div>
   </div>
 </template>
 <script>
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
+import {version} from "../../package.json";
 
 export default {
   name: 'Auth',
@@ -32,6 +33,7 @@ export default {
     return {
       status: '',
       submit_button: true,
+      version: version,
       auth_data: {
         email_or_username: '',
         password: ''

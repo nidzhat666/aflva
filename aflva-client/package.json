@@ -1,12 +1,12 @@
 {
-  "name": "afl-va-client",
-  "version": "0.1.0",
+  "name": "spag-client",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "electron:build": "vue-cli-service electron:build",
+    "electron:build": "vue-cli-service electron:build -p always",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
@@ -18,7 +18,6 @@
     "bootstrap": "^5.1.3",
     "core-js": "^3.6.5",
     "fsuipc": "^0.4.1",
-    "keytar": "^7.7.0",
     "statman-stopwatch": "^2.13.0",
     "vue": "^3.2.21",
     "vue-loader": "^16.8.3",
@@ -40,6 +39,10 @@
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "vue-cli-plugin-electron-builder": "~2.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nidzhat666/aflva-client.git"
   },
   "eslintConfig": {
     "root": true,
