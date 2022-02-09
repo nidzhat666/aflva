@@ -25,7 +25,6 @@
 <script>
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
-import keytar from 'keytar'
 
 export default {
   name: 'Auth',
@@ -45,12 +44,8 @@ export default {
     },
   },
   created(){
-    keytar.findCredentials('afl').then(data=>{
-      if (data.length){
-        this.auth_data.email_or_username = data[0].account
-        this.auth_data.password = data[0].password
-      }
-    })
+    this.auth_data.email_or_username = localStorage.email
+    this.auth_data.password = localStorage.password
   },
   methods: {
     submit() {
@@ -75,6 +70,9 @@ export default {
     max-width: 300px;
     margin: 0 auto;
     transition: opacity 1s ease-out;
+  }
+  label{
+    font-weight: bold;
   }
 }
 </style>

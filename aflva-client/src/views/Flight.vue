@@ -10,9 +10,9 @@
         <span>{{fsuipc_data.gs}} kts</span>
       </div>
       <div class="col">
-        <div v-if= "landing_vs" >
-          <div>Landin rate</div>
-          <span style="border: 1px dashed black;">{{landing_vs}} fpm</span>
+        <div v-if= "fsuipc_data.landing_vs" >
+          <div>Landing rate</div>
+          <span style="border: 1px dashed black;">{{fsuipc_data.landing_vs}} fpm</span>
         </div>
         <div v-else>
           <div>Vertical Speed</div>
@@ -47,20 +47,49 @@
 
 <script>
 import fsuipc from 'fsuipc'
+import axios from 'axios'
+
+
+function calcCrow(latitude1, longitude1, latitude2, longitude2)
+{
+  let R = 3440.0348679829;
+  let dLat = toRad(latitude2-latitude1);
+  let dLon = toRad(longitude2-longitude1);
+  let lat1 = toRad(latitude1);
+  let lat2 = toRad(latitude2);
+
+  let a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  let d = R * c;
+  return d;
+}
+
+function toRad(Value)
+{
+  return Value * Math.PI / 180;
+}
 
 export default {
   name: "Flight",
   data() {
     return {
-      time: 0,
+      time:0,
       interval: null,
-      fsuipc_data: {},
       fsuipc_flag: true,
-      fsuipc_status: '',
+      fsuipc_status: 'Disconnected',
       fsuipc_interval:null,
-      landing_vs: 0,
       book: this.$store.state.books[0],
-      penalty: {},
+      fsuipc_data: {
+        flight_time: 0,
+        aircraft:this.$store.state.books[0].aircraft.aircraft_type.aircraft_name,
+        distance_flown:0,
+        vs:0,
+        altitude:0,
+        gs:0,
+        landing_vs: 0,
+        book: this.$store.state.books[0].id
+      },
       error: {
         message: false,
       },
@@ -73,29 +102,42 @@ export default {
     setTimeout(function() {
       this.interval = setInterval(()=>{this.time++}, 1000)
     }, 2000)
+    this.status_update_interval = setInterval(this.status_update, 5000)
   },
   beforeUnmount() {
     if (this.fsuipc_interval) clearInterval(this.fsuipc_interval)
+    if (this.status_update_interval) clearInterval(this.status_update_interval)
   },
   watch: {
+    status: function (prev){
+      if (prev === 'Taxiing') {
+        this.fsuipc_data.dep_fuel = this.fsuipc_data.fuel
+        this.fsuipc_data.dep_tw = this.fsuipc_data.tw
+        this.fsuipc_data.dep_zfw = this.fsuipc_data.zfw
+        this.fsuipc_data.dep_time = new Date().toISOString()
+      }
+    },
+    'fsuipc_data.coordinates': function (prev, current){
+      if (prev && current) this.fsuipc_data.distance_flown += calcCrow(prev[0],prev[1],current[0],current[1])
+    },
     'fsuipc_data.on_ground': function (prev, current){
-      if (prev === 1 && current === 0 && !this.landing_vs){
-        this.landing_vs =  this.fsuipc_data.lvs
+      if (prev === 1 && current === 0 && !this.fsuipc_data.landing_vs){
+        this.fsuipc_data.landing_vs =  this.fsuipc_data.lvs
       }
     },
     'fsuipc_data.overspeed': function (prev, current){
       if (prev === 0 && current === 1){
-        this.penalty.overspeed = true
+        this.fsuipc_data.penalty.overspeed = true
       }
     },
     'fsuipc_data.stall': function (prev, current){
       if (prev === 0 && current === 1){
-        this.penalty.stall = true
+        this.fsuipc_data.penalty.stall = true
       }
     },
     'fsuipc_data.crash': function (prev, current){
       if (prev === 0 && current === 1){
-        this.penalty.crash = true
+        this.fsuipc_data.penalty.crash = true
       }
     },
 
@@ -113,17 +155,35 @@ export default {
       return hours+':'+minutes+':'+seconds;
     },
     status: function(){
-      if (!this.fsuipc_data.engines && !this.landing_vs && this.fsuipc_data.on_ground) return 'On stand'
-      else if (this.fsuipc_data.engines && !this.landing_vs && this.fsuipc_data.on_ground) return 'Taxiing'
+      if (!this.fsuipc_data.engines && !this.fsuipc_data.landing_vs && this.fsuipc_data.on_ground) return 'On stand'
+      else if (this.fsuipc_data.engines && !this.fsuipc_data.landing_vs && this.fsuipc_data.on_ground) return 'Taxiing'
       else if (this.fsuipc_data.vs > 100 && !this.fsuipc_data.on_ground) return 'Climb'
       else if (this.fsuipc_data.vs < 100 && this.fsuipc_data.vs > -100 && !this.fsuipc_data.on_ground) return 'Cruise'
       else if (this.fsuipc_data.vs < -100 && !this.fsuipc_data.on_ground) return 'Descent'
-      else if (this.fsuipc_data.engines && this.landing_vs && this.fsuipc_data.on_ground) return 'Arrived'
-      else if (!this.fsuipc_data.engines && this.landing_vs && this.fsuipc_data.on_ground) return 'Arrived - On Stand'
+      else if (this.fsuipc_data.engines && this.fsuipc_data.landing_vs && this.fsuipc_data.on_ground) return 'Arrived'
+      else if (!this.fsuipc_data.engines && this.fsuipc_data.landing_vs && this.fsuipc_data.on_ground) return 'Arrived - On Stand'
       else return ''
     }
   },
   methods: {
+    status_update(){
+      axios.patch('https://afl-va.ru/api/books/0/', {
+            status: this.status,
+            latitude: this.fsuipc_data.latitude,
+            longitude: this.fsuipc_data.longitude,
+            altitude: this.fsuipc_data.altitude,
+            speed: this.fsuipc_data.gs,
+            _method: 'patch'
+          },
+          {
+            headers: {
+              Authorization: 'Token ' + this.$store.getters.getToken
+            }
+          }
+      ).then(() => {
+      }).catch(() => {
+      });
+    },
     getFsuipc() {
       if(!this.fsuipc_flag){return;}
         let fsuipc_obj = new fsuipc.FSUIPC();
@@ -139,6 +199,8 @@ export default {
               obj.add('pause', 0x264, fsuipc.Type.Int16);
               obj.add('vs', 0x02C8, fsuipc.Type.Int16);
               obj.add('lvs', 0x30C, fsuipc.Type.Int16);
+              obj.add('zfw', 0x3BFC, fsuipc.Type.Int16);
+              obj.add('tw', 0x30C0, fsuipc.Type.Double);
               obj.add('on_ground', 0x366, fsuipc.Type.Int16);
               obj.add('overspeed', 0x36D, fsuipc.Type.SByte);
               obj.add('stall', 0x036C, fsuipc.Type.SByte);
@@ -147,9 +209,13 @@ export default {
               return obj.process().then((result) => {
                 this.fsuipc_data.latitude = result.latitude * 90.0 / (10001750.0 * 65536.0 * 65536.0)
                 this.fsuipc_data.longitude = result.longitude * 360 / (65536 * 65536 * 65536 * 65536)
+                this.fsuipc_data.coordinates = [this.fsuipc_data.latitude, this.fsuipc_data.longitude]
                 this.fsuipc_data.aircraft = result.aircraft
                 this.fsuipc_data.vs = Math.ceil(result.vs * 60 * 3.28084 / 256)
                 this.fsuipc_data.lvs = Math.ceil(result.vs * 60 * 3.28084 / 256)
+                this.fsuipc_data.zfw = Math.ceil((result.zfw/256)*0.45359237*1000)
+                this.fsuipc_data.tw = Math.ceil(result.tw*0.45359237)
+                this.fsuipc_data.fuel = this.fsuipc_data.tw - this.fsuipc_data.zfw
                 this.fsuipc_data.altitude =Math.ceil( result.altitude/65536/65536*3.28084 );
                 this.fsuipc_data.gs =Math.ceil( result.gs/65536 * 3600/1852);
                 this.fsuipc_data.pause = result.pause;
@@ -175,22 +241,24 @@ export default {
     ask_cancel(){
       if (confirm("Are you sure you want to cancel flight?")) {
         this.$parent.flight = null
-        console.log("You pressed OK!");
-      } else {
-        console.log("You pressed Cancel!");
       }
     },
     ask_save(){
       if (confirm("Are you sure you want to save flight?")) {
         let flight_log = this.fsuipc_data
-        flight_log.landing_vs = this.landing_vs
-        flight_log.time = this.time
-        flight_log.penalties = this.penalty
-        console.log(flight_log)
-        this.$parent.flight = null
-        console.log("You pressed OK!");
-      } else {
-        console.log("You pressed Cancel!");
+        flight_log.flight_time = this.time
+        flight_log.distance_flown = Math.ceil(flight_log.distance_flown)
+        axios.post('https://afl-va.ru/api/flights/',
+            {fsuipc_data: flight_log},
+            {
+              headers: {
+                Authorization: 'Token ' + this.$store.getters.getToken
+              }
+            }
+        ).then(() => {
+          this.$parent.reqBooks()
+        }).catch(() => {
+        });
       }
     },
     pause_time(){

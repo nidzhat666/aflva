@@ -61,7 +61,7 @@
       </div>
 
     </div>
-    <div class="mt-3" v-else>
+    <div class="no-books" v-else>
       <h5>No Bookings found.</h5>
     </div>
   </div>
@@ -156,5 +156,8 @@ export default {
       border: 1px solid black;
     }
   }
+}
+.no-books{
+  margin-top: 80px;
 }
 </style>

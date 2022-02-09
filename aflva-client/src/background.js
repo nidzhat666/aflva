@@ -23,8 +23,10 @@ async function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      devTools: false
     }
   })
+  win.setMenuBarVisibility(false)
   win.on('close', function(e) {
     const choice = require('electron').dialog.showMessageBoxSync(this,
         {
