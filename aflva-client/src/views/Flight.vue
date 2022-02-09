@@ -113,10 +113,13 @@ export default {
   watch: {
     status: function (prev){
       if (prev === 'Taxiing') {
-        this.fsuipc_data.dep_fuel = this.fsuipc_data.fuel
-        this.fsuipc_data.dep_tw = this.fsuipc_data.tw
-        this.fsuipc_data.dep_zfw = this.fsuipc_data.zfw
-        this.fsuipc_data.dep_time = new Date().toISOString()
+        if (!this.fsuipc_data.dep_time){
+          this.fsuipc_data.dep_fuel = this.fsuipc_data.fuel
+          this.fsuipc_data.dep_tw = this.fsuipc_data.tw
+          this.fsuipc_data.dep_zfw = this.fsuipc_data.zfw
+          this.fsuipc_data.dep_time = new Date().toISOString()
+        }
+
       }
     },
     'fsuipc_data.coordinates': function (prev, current){
@@ -125,6 +128,7 @@ export default {
     'fsuipc_data.on_ground': function (prev, current){
       if (prev === 1 && current === 0 && !this.fsuipc_data.landing_vs){
         this.fsuipc_data.landing_vs =  this.fsuipc_data.lvs
+        this.fsuipc_data.arr_time = new Date().toISOString()
       }
     },
     'fsuipc_data.overspeed': function (prev, current){
@@ -201,7 +205,7 @@ export default {
               obj.add('pause', 0x264, fsuipc.Type.Int16);
               obj.add('vs', 0x02C8, fsuipc.Type.Int16);
               obj.add('lvs', 0x30C, fsuipc.Type.Int16);
-              obj.add('zfw', 0x3BFC, fsuipc.Type.Int16);
+              obj.add('zfw', 0x3BFC, fsuipc.Type.UInt32);
               obj.add('tw', 0x30C0, fsuipc.Type.Double);
               obj.add('on_ground', 0x366, fsuipc.Type.Int16);
               obj.add('overspeed', 0x36D, fsuipc.Type.SByte);
@@ -215,7 +219,7 @@ export default {
                 this.fsuipc_data.aircraft = result.aircraft
                 this.fsuipc_data.vs = Math.ceil(result.vs * 60 * 3.28084 / 256)
                 this.fsuipc_data.lvs = Math.ceil(result.vs * 60 * 3.28084 / 256)
-                this.fsuipc_data.zfw = Math.ceil((result.zfw/256)*0.45359237*1000)
+                this.fsuipc_data.zfw = Math.ceil((result.zfw/256)*0.45359237)
                 this.fsuipc_data.tw = Math.ceil(result.tw*0.45359237)
                 this.fsuipc_data.fuel = this.fsuipc_data.tw - this.fsuipc_data.zfw
                 this.fsuipc_data.altitude =Math.ceil( result.altitude/65536/65536*3.28084 );
