@@ -48,6 +48,7 @@
 <script>
 import fsuipc from 'fsuipc'
 import axios from 'axios'
+import {version} from "../../package.json";
 
 
 function calcCrow(latitude1, longitude1, latitude2, longitude2)
@@ -81,6 +82,7 @@ export default {
       fsuipc_interval:null,
       book: this.$store.state.books[0],
       fsuipc_data: {
+        client_version:version,
         flight_time: 0,
         aircraft:this.$store.state.books[0].aircraft.aircraft_type.aircraft_name,
         distance_flown:0,
