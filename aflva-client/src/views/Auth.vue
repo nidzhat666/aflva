@@ -67,10 +67,6 @@ export default {
     axios.get('https://api.github.com/repos/nidzhat666/aflva-client/releases')
         .then((res) => {
           let latest = res.data[0]
-          console.log(latest)
-          console.log('v' + version)
-          console.log(latest.tag_name)
-          console.log(latest.tag_name !== 'v' + version)
           if (latest.tag_name !== 'v' + version) {
             this.update = {
               version: latest.tag_name,
