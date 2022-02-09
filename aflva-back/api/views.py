@@ -45,7 +45,7 @@ class FlightViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         defaults['flight_time'] = fsuipc_data.get('flight_time')
         defaults['distance'] = fsuipc_data.get('distance_flown')
         defaults['landing_vs'] = fsuipc_data.get('landing_vs')
-        defaults['points'] = 0
+        defaults['points'] = 120
         defaults['fuel_used'] = fsuipc_data.get('dep_fuel') - fsuipc_data.get('fuel') \
             if isinstance(fsuipc_data.get('dep_fuel'), int) and isinstance(fsuipc_data.get('fuel'), int) else None
         defaults['fuel_left'] = fsuipc_data.get('fuel')
