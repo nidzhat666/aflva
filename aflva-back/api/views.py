@@ -32,7 +32,8 @@ class FlightViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         fsuipc_data = request.data.get('fsuipc_data')
         defaults['penalty'] = set()
         penalties = Penalty.objects.all()
-        if book := Book.objects.filter(id=fsuipc_data.get('book')).first():
+        if hasattr(self.request.user.pilot, 'book'):
+            book = self.request.user.pilot.book
             defaults['company'] = book.company.id if getattr(book, 'company') else None
             defaults['flightnum'] = book.schedule.flightnum if getattr(book, 'schedule') else None
             defaults['callsign'] = book.callsign if getattr(book, 'callsign') else None
