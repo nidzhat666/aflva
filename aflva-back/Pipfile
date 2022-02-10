@@ -49,6 +49,7 @@ pyTelegramBotAPI = "==3.8.2"
 django-storages = "*"
 boto3 = "*"
 drf-api-logger = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
