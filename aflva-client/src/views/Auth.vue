@@ -1,6 +1,16 @@
 <template>
   <div style="margin-top: 80px;">
-    <div v-if="update.version" class="alert alert-warning w-75 m-auto" role="alert">
+    <div v-if="!updates_check" class="d-flex flex-column align-items-center justify-content-center">
+      <div class="row">
+        <div class="spinner-border" role="status">
+          <span class="sr-only"></span>
+        </div>
+      </div>
+      <div class="row">
+        <strong>Checking for updates</strong>
+      </div>
+    </div>
+    <div v-else-if="update.version" class="alert alert-warning w-75 m-auto" role="alert">
       <h4 class="alert-heading">New version</h4>
       New client version {{ update.version }} available on following link:<span
         class="btn btn-link" @click="browser_url(update.url)">SPAG Client {{ update.version }}</span>.
@@ -37,7 +47,8 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import {version} from "../../package.json";
 import axios from "axios";
-const { shell } = require('electron')
+
+const {shell} = require('electron')
 
 export default {
   name: 'Auth',
@@ -50,6 +61,7 @@ export default {
         email_or_username: '',
         password: ''
       },
+      updates_check: null,
       update: {
         version: null,
         url: null
@@ -64,6 +76,8 @@ export default {
   created() {
     this.auth_data.email_or_username = localStorage.email
     this.auth_data.password = localStorage.password
+  },
+  mounted() {
     axios.get('https://api.github.com/repos/nidzhat666/aflva-client/releases/latest')
         .then((res) => {
           let latest = res.data
@@ -75,6 +89,7 @@ export default {
           }
         }).catch(() => {
     });
+    this.updates_check = true
   },
   methods: {
     submit() {
@@ -86,10 +101,10 @@ export default {
         }
       })
     },
-    browser_url(url){
+    browser_url(url) {
       shell.openExternal(url)
     }
-  }
+  },
 }
 </script>
 <style lang="scss">
