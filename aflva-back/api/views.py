@@ -46,7 +46,7 @@ class FlightViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
                 defaults['penalty'].add(penalty)
             defaults['route'] = book.route if getattr(book, 'route') else None
             defaults['pax'] = book.pax if getattr(book, 'pax') else None
-            defaults['cargo'] = book.pax if getattr(book, 'cargo') else None
+            defaults['cargo'] = book.cargo if getattr(book, 'cargo') else None
         defaults['distance'] = fsuipc_data.get('distance_flown', 0)
         #     Distance
         if (penalty := penalties.filter(name='Bonus Long Flight 1200-1800').first()) and 1200 < defaults['distance'] < 1800:
