@@ -50,7 +50,6 @@ import fsuipc from 'fsuipc'
 import axios from 'axios'
 import {version} from "../../package.json";
 
-
 function calcCrow(latitude1, longitude1, latitude2, longitude2)
 {
   let R = 3440.0348679829;
@@ -75,6 +74,10 @@ export default {
   name: "Flight",
   data() {
     return {
+      stopwatch: {
+        start: performance.now(),
+        end: performance.now(),
+      },
       time:0,
       interval: null,
       fsuipc_flag: true,
@@ -105,6 +108,7 @@ export default {
       this.interval = setInterval(()=>{this.time++}, 1000)
     }, 2000)
     this.status_update_interval = setInterval(this.status_update, 5000)
+    setInterval(this.set_time_duration, 1000)
   },
   beforeUnmount() {
     if (this.fsuipc_interval) clearInterval(this.fsuipc_interval)
@@ -149,6 +153,12 @@ export default {
 
   },
   computed:{
+    stopwatch_duration: function (){
+      return this.stopwatch.end ? this.stopwatch.end - this.stopwatch.start : performance.now() - this.stopwatch.start
+    },
+    stopwatch_running: function (){
+      return !this.stopwatch.end
+    },
     normal_time: function(){
       let sec_num = this.time
       let hours   = Math.floor(sec_num / 3600);
@@ -172,6 +182,21 @@ export default {
     }
   },
   methods: {
+    set_time_duration(){
+      let duration = this.stopwatch.end ? this.stopwatch.end - this.stopwatch.start : performance.now() - this.stopwatch.start
+      this.time = Math.floor(duration/1000)
+    },
+    stopwatch_start(){
+      if (!this.stopwatch_running){
+        this.stopwatch.start = performance.now() - this.stopwatch_duration
+        this.stopwatch.end = null
+      }
+    },
+    stopwatch_stop(){
+      if (this.stopwatch_running){
+        this.stopwatch.end = performance.now()
+      }
+    },
     status_update(){
       axios.patch('https://afl-va.ru/api/books/0/', {
             status: this.status,
@@ -231,15 +256,16 @@ export default {
                 this.fsuipc_data.crash = result.crash;
                 this.fsuipc_data.engines = result.engines;
                 if (result.pause || result.on_ground){
-                  this.pause_time()
+                  this.stopwatch_stop()
                 } else {
-                  this.resume_time()
+                  this.stopwatch_start()
                 }
                 fsuipc_obj.close().then(()=>{this.fsuipc_flag = true})
               })
             })
             .catch((err) => {
               this.fsuipc_status = 'Disconnected'
+              this.stopwatch_stop()
               console.log(err)
               fsuipc_obj.close().then(()=>{this.fsuipc_flag = true})
             });
