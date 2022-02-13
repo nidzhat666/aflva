@@ -76,6 +76,11 @@ class Pilot(models.Model):
                 self._rating = 100
         return self._rating
 
+    @property
+    def now(self):
+        flight = Flight.objects.filter(pilot=self).order_by('-id').first()
+        return flight.arrival_airport
+
     class Meta:
         verbose_name_plural = "Pilots"
 

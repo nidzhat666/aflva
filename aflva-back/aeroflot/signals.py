@@ -14,8 +14,7 @@ from .models import Flight, Fleet
 @receiver(post_save, sender=Flight)
 def flight_post_save(sender, **kwargs):
     instance = kwargs.get('instance')
-    if instance.arrival_airport:
-        obj = Fleet.objects.filter(aircraft_registration=instance.aircraft_registration).first()
+    if instance.arrival_airport and (obj := Fleet.objects.filter(aircraft_registration=instance.aircraft_registration).first()):
         obj.now = instance.arrival_airport
         obj.save()
     if hasattr(instance.pilot, 'book'):
