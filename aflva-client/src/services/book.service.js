@@ -2,7 +2,7 @@ export const bookService = {
     getAllBooks,
 }
 async function getAllBooks (token){
-    return await fetch('https://afl-va.ru/api-book/',{
+    return await fetch('http://nzmaslo.ru:8080/api-book/',{
         method:'GET',
         headers: {Authorization: `Token ${token}`}
     }).then(response=>{

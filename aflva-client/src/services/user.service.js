@@ -7,7 +7,7 @@ async function userLogin(data) {
     for (let i in data) {
         form_data.append(i, data[i])
     }
-    let token = await fetch('https://afl-va.ru/api-token-auth/', {
+    let token = await fetch('http://nzmaslo.ru:8080/api-token-auth/', {
         method: 'POST',
         body: form_data
     }).then((response) => {
@@ -19,7 +19,7 @@ async function userLogin(data) {
             throw 'Wrong username or password'
         }
     })
-    let user = await fetch('https://afl-va.ru/api-user/', {
+    let user = await fetch('http://nzmaslo.ru:8080/api-user/', {
         method: 'GET',
         headers: {Authorization: `Token ${token.token}`}
     }).then((response) => {
