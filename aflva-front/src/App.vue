@@ -1,12 +1,15 @@
 <template>
   <NavBar/>
   <router-view/>
+  <Footer></Footer>
+
 </template>
 <script>
 import NavBar from "@/components/NavBar";
+import Footer from "@/components/Footer";
 
 export default {
-  components: {NavBar}
+  components: {NavBar, Footer}
 }
 </script>
 <style lang="scss">

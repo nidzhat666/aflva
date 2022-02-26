@@ -1,7 +1,7 @@
 <template>
   <div class="bg-light m-3">
     <div class="container shadow-lg table-responsive p-3">
-      <h3>{{title}}</h3>
+      <h3>{{ title }}</h3>
       <table class="table">
         <thead>
         <tr>
@@ -49,7 +49,7 @@ import {Tooltip} from 'bootstrap/dist/js/bootstrap.esm.min.js'
 
 export default {
   name: "Online",
-  props:{
+  props: {
     title: String,
     items: Array
   },

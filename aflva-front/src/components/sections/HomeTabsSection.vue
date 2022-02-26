@@ -25,11 +25,11 @@
     </ul>
     <div class="tab-content" id="pills-tabContent">
       <div class="tab-pane fade show active" id="pills-projects" role="tabpanel" aria-labelledby="pills-projects-tab">
-        <img src="../assets/img/aeroflot_logo.png" alt="">
-        <img src="../assets/img/azur_logo.svg" alt="">
-        <img src="../assets/img/pobeda_logo.png" alt="">
-        <img src="../assets/img/s7_logo.png" alt="">
-        <img src="../assets/img/utair_logo.png" alt="">
+        <img src="../../assets/img/aeroflot_logo.png" alt="">
+        <img src="../../assets/img/azur_logo.svg" alt="">
+        <img src="../../assets/img/pobeda_logo.png" alt="">
+        <img src="../../assets/img/s7_logo.png" alt="">
+        <img src="../../assets/img/utair_logo.png" alt="">
       </div>
       <div class="tab-pane fade" id="pills-news" role="tabpanel" aria-labelledby="pills-news-tab"><h4>No news</h4></div>
       <div class="tab-pane fade" id="pills-about" role="tabpanel" aria-labelledby="pills-about-tab"></div>
