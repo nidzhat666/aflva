@@ -1,10 +1,10 @@
 <template>
   <div class="container mt-3">
-    <div class="row">
-      <div class="col m-auto mb-0">
+    <div class="row justify-content-center">
+      <div class="col m-auto mb-0 lg-block">
         <img class="flight-attendant" height="290px" src="https://github.com/nidzhat666/images/blob/main/flight-attendant.png?raw=true" alt="">
       </div>
-      <div class="col m-2">
+      <div class="col p-3 col-auto">
         <h1>Contact Us</h1>
         <span>Напишите сообщение и мы вам ответим на вашу почту</span>
         <div class="row">
@@ -14,7 +14,7 @@
         <textarea class="form-control mt-1" name="" id="" cols="10" rows="5"></textarea>
         <button type="submit" class="btn btn-primary mt-3">Send</button>
       </div>
-      <div class="col m-auto">
+      <div class="col m-auto lg-block">
         <img height="290px" src="https://github.com/nidzhat666/images/blob/main/routes.png?raw=true" alt="">
       </div>
     </div>
@@ -29,5 +29,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+@media screen and (max-width: 1200px){
+  .lg-block{
+    display: none;
+  }
+}
 </style>
