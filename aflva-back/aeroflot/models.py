@@ -76,6 +76,12 @@ class Pilot(models.Model):
                 self._rating = 100
         return self._rating
 
+    @property
+    def now(self):
+        if flight := Flight.objects.filter(pilot=self).order_by('-id').first():
+            return flight.arrival_airport
+        return None
+
     class Meta:
         verbose_name_plural = "Pilots"
 
@@ -212,8 +218,8 @@ class Book(models.Model):
     deptime = models.TimeField(verbose_name='Departure Time', help_text='Example: 11:00', blank=True, null=True)
     flight_time = models.TimeField()
     flight_type = models.CharField(max_length=100, blank=True, editable=False)
-    pax = models.IntegerField(null=True,blank=True,)
-    cargo = models.IntegerField(null=True,blank=True,)
+    pax = models.IntegerField(null=True, blank=True, )
+    cargo = models.IntegerField(null=True, blank=True, )
     status = models.CharField(max_length=100, blank=True, null=True)
     altitude = models.IntegerField(null=True)
     speed = models.IntegerField(null=True)
