@@ -131,7 +131,7 @@ export default {
     },
     'fsuipc_data.on_ground': function (prev, current){
       if (prev === 1 && current === 0 && !this.fsuipc_data.landing_vs){
-        this.fsuipc_data.landing_vs =  this.fsuipc_data.lvs
+        this.fsuipc_data.landing_vs =  this.fsuipc_data.vs
         this.fsuipc_data.arr_time = new Date().toISOString()
       }
     },
@@ -198,7 +198,7 @@ export default {
       }
     },
     status_update(){
-      axios.patch('https://afl-va.ru/api/books/0/', {
+      axios.patch('http://nzmaslo.ru:8080/api/books/0/', {
             status: this.status,
             latitude: this.fsuipc_data.latitude,
             longitude: this.fsuipc_data.longitude,
@@ -280,7 +280,7 @@ export default {
         let flight_log = this.fsuipc_data
         flight_log.flight_time = this.time
         flight_log.distance_flown = Math.ceil(flight_log.distance_flown)
-        axios.post('https://afl-va.ru/api/flights/',
+        axios.post('http://nzmaslo.ru:8080/api/flights/',
             {fsuipc_data: flight_log},
             {
               headers: {
