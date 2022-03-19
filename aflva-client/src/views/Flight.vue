@@ -82,7 +82,6 @@ export default {
       interval: null,
       fsuipc_flag: true,
       fsuipc_status: 'Disconnected',
-      fsuipc_interval:null,
       book: this.$store.state.books[0],
       fsuipc_data: {
         client_version:version,
@@ -101,7 +100,7 @@ export default {
     }
   },
   created() {
-    this.fsuipc_interval = setInterval(this.getFsuipc, 1000)
+    this.getFsuipc()
   },
   mounted() {
     setTimeout(function() {
@@ -111,8 +110,8 @@ export default {
     setInterval(this.set_time_duration, 1000)
   },
   beforeUnmount() {
-    if (this.fsuipc_interval) clearInterval(this.fsuipc_interval)
     if (this.status_update_interval) clearInterval(this.status_update_interval)
+    this.fsuipc_flag = false
   },
   watch: {
     status: function (prev){
@@ -129,7 +128,7 @@ export default {
     'fsuipc_data.coordinates': function (prev, current){
       if (prev && current) this.fsuipc_data.distance_flown += calcCrow(prev[0],prev[1],current[0],current[1])
     },
-    'fsuipc_data.on_ground': function (prev, current){
+     'fsuipc_data.on_ground': function (prev, current){
       if (prev === 1 && current === 0 && !this.fsuipc_data.landing_vs){
         this.fsuipc_data.landing_vs =  this.fsuipc_data.vs
         this.fsuipc_data.arr_time = new Date().toISOString()
@@ -216,11 +215,12 @@ export default {
       });
     },
     getFsuipc() {
-      if(!this.fsuipc_flag){return;}
+      if(!this.fsuipc_flag){
+        return;
+      }
         let fsuipc_obj = new fsuipc.FSUIPC();
         fsuipc_obj.open()
             .then((obj) => {
-              this.fsuipc_flag = false
               this.fsuipc_status = 'Connected'
               obj.add('latitude', 0x560, fsuipc.Type.UInt64);
               obj.add('longitude', 0x568, fsuipc.Type.UInt64);
@@ -260,14 +260,20 @@ export default {
                 } else {
                   this.stopwatch_start()
                 }
-                fsuipc_obj.close().then(()=>{this.fsuipc_flag = true})
+                fsuipc_obj.close().then(()=>{
+                  this.fsuipc_flag = true
+                  this.getFsuipc()
+                })
               })
             })
             .catch((err) => {
               this.fsuipc_status = 'Disconnected'
               this.stopwatch_stop()
               console.log(err)
-              fsuipc_obj.close().then(()=>{this.fsuipc_flag = true})
+              fsuipc_obj.close().then(()=>{
+                this.fsuipc_flag = true
+                this.getFsuipc()
+              })
             });
     },
     ask_cancel(){
