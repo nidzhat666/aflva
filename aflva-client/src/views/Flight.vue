@@ -267,6 +267,7 @@ export default {
               }
               fsuipc_obj.close().then(() => {
                 if (this.close_flight) {
+                  this.close_flight = false
                   this.save_flight()
                 }
                 this.getFsuipc()
@@ -279,6 +280,7 @@ export default {
             console.log(err)
             fsuipc_obj.close().then(() => {
               if (this.close_flight) {
+                this.close_flight = false
                 this.save_flight()
               }
               this.getFsuipc()
