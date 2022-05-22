@@ -6,8 +6,72 @@
       </a>
 
       <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
-        <a class="me-3 py-2 text-dark text-decoration-none text-white" href="#" v-for="tab in tabs"
-           :key="tab.id">{{ tab.text }}</a>
+        <div>
+          <a class="me-3 py-2 text-dark text-decoration-none text-white" href="#">Profile</a>
+        </div>
+        <div class="dropdown">
+          <a class="me-3 py-2 text-dark text-decoration-none text-white dropdown-toggle" data-bs-toggle="dropdown"
+             aria-expanded="false" href="#">Schedules</a>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li>
+              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
+                Aeroflot
+                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
+              </a>
+              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
+                Aeroflot
+                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
+              </a>
+              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
+                Aeroflot
+                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
+              </a>
+              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
+                Aeroflot
+                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
+              </a>
+              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
+                Aeroflot
+                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="dropdown">
+          <a class="me-3 py-2 text-dark text-decoration-none text-white dropdown-toggle" data-bs-toggle="dropdown"
+             aria-expanded="false" href="#">Fleet</a>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li>
+              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
+                Aeroflot
+                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
+              </a>
+              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
+                Aeroflot
+                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
+              </a>
+              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
+                Aeroflot
+                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
+              </a>
+              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
+                Aeroflot
+                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
+              </a>
+              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
+                Aeroflot
+                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <a class="me-3 py-2 text-dark text-decoration-none text-white" href="#">Crew</a>
+        </div>
+        <div>
+          <a class="me-3 py-2 text-dark text-decoration-none text-white" href="#">Routes</a>
+        </div>
+
       </nav>
     </div>
   </div>

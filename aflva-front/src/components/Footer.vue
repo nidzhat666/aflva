@@ -1,5 +1,5 @@
 <template>
-  <div class="main-section">
+  <div class="footer">
     <div class="container p-3 text-white">
       <span>
         Вы открыли веб-сайт некоммерческой виртуальной группы «Sky Planet Aviation Group», действующей в сетях VATSIM и IVAO.
@@ -22,7 +22,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.main-section {
+.footer {
   background-color: #02458d;
 }
 </style>

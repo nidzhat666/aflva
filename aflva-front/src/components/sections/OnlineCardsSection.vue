@@ -24,7 +24,7 @@
                 <img style="width: 12px;" src="http://nzmaslo.ru:8080/static/images/cruise.png" title="Cruise">
               </td>
               <td title="AFL7122 - T154M (RA-85669)">Igor Leukhin</td>
-              <td title="Volgograd, Volgograd Airport">URWW</td>
+              <td title="Volgograd, Volgograd Airport" data-bs-toggle="tooltip" data-bs-placement="top">URWW</td>
               <td title="Yekaterinburg, Koltsovo Airport">USSS</td>
             </tr>
             <tr>
@@ -186,8 +186,17 @@
 </template>
 
 <script>
+import {Tooltip} from 'bootstrap/dist/js/bootstrap.esm.min.js'
+
 export default {
-  name: "OnlineCardsSection"
+  name: "OnlineCardsSection",
+  mounted() {
+    Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        .forEach(tooltipNode => {
+          new Tooltip(tooltipNode)
+          console.log(tooltipNode)
+        })
+  },
 }
 </script>
 

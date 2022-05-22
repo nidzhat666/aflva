@@ -11,7 +11,10 @@
           <span class="col">Имя: <strong>Nidzhat Agalarov</strong></span>
           <span class="col">Почта: <strong>nagalarov@mail.ru</strong></span>
         </div>
-        <textarea class="form-control mt-1" name="" id="" cols="10" rows="5"></textarea>
+        <div class="form-floating">
+          <textarea class="form-control" placeholder="Leave a comment here" id="contact-us" style="height: 100px"></textarea>
+          <label for="contact-us">Your Message</label>
+        </div>
         <button type="submit" class="btn btn-primary mt-3">Send</button>
       </div>
       <div class="col m-auto lg-block">
@@ -34,4 +37,5 @@ export default {
     display: none;
   }
 }
+
 </style>
