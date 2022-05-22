@@ -1,34 +1,36 @@
 from django.contrib import admin
-from django.contrib.auth.models import User, Group
-from django.contrib.auth.admin import UserAdmin
-from rest_framework.authtoken.models import TokenProxy
+from django.contrib.auth import get_user_model
+
 from main.models import Profile, AircraftICAO, AircraftType, Agent, Penalty, SimVersion
 
-
-# Register your models here.
-
-# admin.site.unregister(User)
-# admin.site.unregister(Group)
-
-# class CustomUserAdmin(admin.ModelAdmin):
-#     model = User
-#     list_display = ('email','first_name','last_name')
-#     def has_add_permission(self, request):
-#         return False
-#     def has_change_permission(self, request, obj=None):
-#         return True
-#     def has_delete_permission(self, request, obj=None):
-#         return False
-
-# admin.site.register(User,CustomUserAdmin)
+User = get_user_model()
 
 
-class ProfileAdmin(admin.ModelAdmin):
+class ProfileAdmin(admin.TabularInline):
     model = Profile
-    list_display = ('user', 'location', 'flights', 'hours', 'ivaoid', 'vatsimid', 'telegram_chat_id')
 
 
-admin.site.register(Profile, ProfileAdmin)
+class UserAdmin(admin.ModelAdmin):
+    model = User
+    list_display = ('email', 'get_full_name', 'location', 'ivao', 'vatsim')
+    readonly_fields = ('password',)
+    inlines = (ProfileAdmin,)
+    search_fields = ('email', 'first_name', 'last_name', 'profile__ivaoid', 'profile__vatsimid')
+
+    @admin.display
+    def location(self, obj):
+        return obj.profile.location
+
+    @admin.display
+    def ivao(self, obj):
+        return obj.profile.ivaoid
+
+    @admin.display
+    def vatsim(self, obj):
+        return obj.profile.vatsimid
+
+
+admin.site.register(User, UserAdmin)
 
 
 class AircraftTypeAdmin(admin.ModelAdmin):
@@ -56,12 +58,12 @@ class AircraftICAOAdmin(admin.ModelAdmin):
 admin.site.register(AircraftICAO, AircraftICAOAdmin)
 
 
-class AgentAdmin(admin.ModelAdmin):
-    model = Agent
-    list_display = ('agent_version', 'agent_file')
-
-
-admin.site.register(Agent, AgentAdmin)
+# class AgentAdmin(admin.ModelAdmin):
+#     model = Agent
+#     list_display = ('agent_version', 'agent_file')
+#
+#
+# admin.site.register(Agent, AgentAdmin)
 
 
 class PenaltyAdmin(admin.ModelAdmin):

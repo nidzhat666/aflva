@@ -50,6 +50,9 @@ django-storages = "*"
 boto3 = "*"
 drf-api-logger = "*"
 python-dotenv = "*"
+djoser = "*"
+djangorestframework-simplejwt = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 

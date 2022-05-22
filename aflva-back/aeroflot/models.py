@@ -1,15 +1,14 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from main.models import Profile, AircraftType, AircraftICAO, Penalty, SimVersion
 from airac.models import Airport
 from main.scripts import dist_calculate
-from django.contrib.auth.models import User
 from storages.backends.s3boto3 import S3Boto3Storage
 import datetime, os
 
+User = get_user_model()
 
-# Create your models here.
 
 def get_file_path_company(instance, filename):
     ext = filename.split('.')[-1]

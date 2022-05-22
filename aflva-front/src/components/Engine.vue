@@ -13,7 +13,7 @@
               <input type="text" class="form-control" placeholder="To">
             </div>
             <div class="col">
-              <input type="submit" class="form-control btn btn-primary" value="Search">
+              <input type="submit" class="form-control btn btn-primary disabled" value="Search">
             </div>
           </div>
         </form>

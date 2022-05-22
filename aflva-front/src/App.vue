@@ -2,14 +2,23 @@
   <NavBar/>
   <router-view/>
   <Footer></Footer>
-
+  <div class="toast-container position-fixed top-0 start-0 p-3">
+    <div id="liveToast" class="toast border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-body alert alert-danger">
+        {{ $store.state.error_message }}
+      </div>
+    </div>
+  </div>
 </template>
 <script>
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
 export default {
-  components: {NavBar, Footer}
+  components: {NavBar, Footer},
+  mounted(){
+    this.$store.dispatch('initStorage')
+  }
 }
 </script>
 <style lang="scss">

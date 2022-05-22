@@ -1,15 +1,15 @@
 <template>
   <section @mousemove="move">
-    <form class="form-signin">
+    <form class="form-signin" @submit.prevent="">
       <!--    <img class="mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">-->
       <h1 class="h3 mb-3 font-weight-normal">Sign In</h1>
       <div class="mt-3">
         <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="">
+        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="" v-model="email">
       </div>
       <div class="mt-3">
         <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="" v-model="password">
       </div>
       <div class="mt-3">
         <div class="checkbox mb-3">
@@ -18,15 +18,24 @@
           </label>
         </div>
       </div>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      <button class="btn btn-lg btn-primary btn-block" type="submit" v-on:click="submit">Sign in</button>
     </form>
   </section>
+
 
 </template>
 
 <script>
+
 export default {
   name: "Login",
+  data (){
+    return{
+      email: '',
+      password: '',
+      error_message: ''
+    }
+  },
   mounted() {
     const movementStrength = 25;
     const height = movementStrength / window.innerHeight;
@@ -41,6 +50,11 @@ export default {
       el.style.backgroundPositionX = newvalueX + "px";
       el.style.backgroundPositionY = newvalueY + "px";
     });
+  },
+  methods: {
+    submit(){
+      this.$store.dispatch('logIn', {email: this.email, password: this.password})
+    },
   }
 }
 </script>
@@ -68,6 +82,7 @@ form {
   width: 100%;
   max-width: 450px;
   padding: 30px;
+  margin: 10px;
 }
 .form-signin .checkbox {
   font-weight: 400;
