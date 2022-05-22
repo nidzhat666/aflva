@@ -57,7 +57,7 @@
       <Flight v-if="flight"/>
       <div class="m-3" v-else>
         <!--      <button v-on:click="$router.push({'name':'Flight'})" class="btn btn-dark">Fly</button>-->
-        <button v-on:click="checkFsuipc()" class="btn btn-dark" :class="{disabled: !fsuipc_status}" @click="flight = true">Fly</button>
+        <button class="btn btn-dark" @click="flight = true">Fly</button>
       </div>
 
     </div>
@@ -70,7 +70,6 @@
 
 <script>
 // import fsuipc from 'fsuipc' WORKS ONLY With Windows !!!
-import fsuipc from 'fsuipc'
 import Flight from "@/views/Flight";
 import ErrorModal from "../components/ErrorModal";
 
@@ -82,8 +81,6 @@ export default {
   },
   data() {
     return {
-      fsuipc_status: false,
-      fuipc_interval: null,
       book: {},
       error: {
         message: '',
@@ -94,11 +91,8 @@ export default {
   created() {
     this.reqBooks()
     setInterval(this.reqBooks, 3000)
-    this.checkFsuipc()
-    this.fsuipc_inteval = setInterval(this.checkFsuipc, 3000)
   },
   beforeUnmount() {
-    if (this.fsuipc_inteval) clearInterval(this.fsuipc_inteval)
   },
   watch: {
         book: function (current){
@@ -106,22 +100,6 @@ export default {
         }
   },
   methods: {
-    checkFsuipc() {
-      if (this.flight) return ;
-      const obj = new fsuipc.FSUIPC();
-      obj.open()
-          .then((obj) => {
-            obj.close()
-                .then(() => {
-                  this.fsuipc_status = true
-                  // this.flight = true
-                })
-          })
-          .catch(() => {
-            this.fsuipc_status = false
-            return obj.close();
-          });
-    },
     setErrorMessage(message) {
       this.error.message = message
     },
