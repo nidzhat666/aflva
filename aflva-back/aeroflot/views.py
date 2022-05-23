@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db.models import Count, Avg, Sum
 from django.db.models import IntegerField
 from django.db.models import Prefetch
@@ -18,6 +18,9 @@ from airac.scripts import add_check_airport
 from main.models import Profile, AircraftICAO
 from main.serializers import BookSerializer
 from .models import AircraftImage, Fleet, Schedule, Pilot, Book, Flight, News
+
+User = get_user_model()
+
 
 MONTHS = {
     1: ('Январь', 'January'),

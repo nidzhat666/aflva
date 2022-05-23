@@ -17,6 +17,7 @@ from .models import Penalty
 from .serializers import *
 
 
+
 def index(request):
     return render(request, 'index.html')
 
