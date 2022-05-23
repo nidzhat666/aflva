@@ -38,6 +38,6 @@ urlpatterns = [
                   path('get_apt_info/', get_apt_data, name='get_apt_data'),
                   path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
               ]
-# urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
+urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

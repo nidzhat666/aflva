@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from aeroflot.models import Book, Pilot, Fleet, Company
 from airac.models import Airport
-from .models import Agent, AircraftICAO, AircraftType, Profile
+from .models import Agent, AircraftICAO, AircraftType
 
 User = get_user_model()
 
@@ -77,23 +77,6 @@ class PilotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pilot
         fields = '__all__'
-
-
-from django_countries.serializers import CountryFieldMixin
-
-
-class SpecialProfileSerializer(CountryFieldMixin, serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = '__all__'
-
-
-class SpecialUserSerializer(serializers.ModelSerializer):
-    profile = SpecialProfileSerializer(many=False)
-
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'get_full_name', 'email', 'profile']
 
 
 class AirportSerializer(serializers.ModelSerializer):

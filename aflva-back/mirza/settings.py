@@ -116,8 +116,8 @@ BACKUPS_DIR = BASE_DIR / "backups"
 
 DJOSER = {
     'SERIALIZERS': {
-        'user': 'main.serializers.SpecialUserSerializer',
-        'current_user': 'main.serializers.SpecialUserSerializer',
+        'user': 'main.serializers.UserSerializer',
+        'current_user': 'main.serializers.UserSerializer',
     }
 }
 
@@ -130,7 +130,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'silk.middleware.SilkyMiddleware',
+    'silk.middleware.SilkyMiddleware',
     'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware'
 ]
 DRF_API_LOGGER_DATABASE = True

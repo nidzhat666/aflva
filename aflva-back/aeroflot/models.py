@@ -35,7 +35,7 @@ class Company(models.Model):
 
 class Pilot(models.Model):
     STATUS_CHOISE = (('Just Registred', 'Just Registred'), ('Inactive', 'Inactive'), ('Active', 'Active'))
-    profile = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Pilot")
+    profile = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Pilot", related_name='pilot')
     callsign = models.CharField(default='AFL', max_length=10)
     status = models.CharField(max_length=100, choices=STATUS_CHOISE, default=STATUS_CHOISE[0][0], null=False,
                               blank=False)

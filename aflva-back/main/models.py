@@ -24,6 +24,10 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = []
     objects = UserManager()
 
+    @property
+    def pilot(self):
+        return self.pilot.objects.all().first()
+
     class Meta:
         db_table = 'auth_user'
 
