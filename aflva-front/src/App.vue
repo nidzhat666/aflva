@@ -2,7 +2,7 @@
   <NavBar/>
   <router-view/>
   <Footer></Footer>
-  <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div id="liveToast" class="toast align-items-center text-bg-danger border-0"
          role="alert" aria-live="polite" aria-atomic="true"  data-bs-autohide="true" data-bs-delay="5000">
       <div class="d-flex">
@@ -36,6 +36,10 @@ export default {
   display:flex;
   flex-direction:column;
   min-height: 100vh;
+}
+
+section{
+  flex: 1;
 }
 
 #nav {

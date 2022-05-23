@@ -2,12 +2,21 @@ import { createRouter, createWebHistory } from 'vue-router'
 import store from "@/store";
 import Home from '../views/Home.vue'
 import Login from "@/views/Login";
+import Profile from "@/views/Profile";
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
     meta: {
       requiresAuth: true
     }

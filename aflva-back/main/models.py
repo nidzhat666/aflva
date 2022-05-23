@@ -2,33 +2,37 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
+from django.contrib.auth import get_user_model
 
 from .manager import UserManager
 
 
-class CustomUser(AbstractUser):
-    username = models.CharField(
-        _('username'),
-        max_length=150,
-        unique=False,
-        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
-        error_messages={
-            'unique': _("A user with that username already exists."),
-        },
-        null=True,
-        blank=True
-    )
-    email = models.EmailField(_('email address'), unique=True)
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
-    objects = UserManager()
+# class CustomUser(AbstractUser):
+#     username = models.CharField(
+#         _('username'),
+#         max_length=150,
+#         unique=False,
+#         help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+#         error_messages={
+#             'unique': _("A user with that username already exists."),
+#         },
+#         null=True,
+#         blank=True
+#     )
+#     email = models.EmailField(_('email address'), unique=True)
+#     USERNAME_FIELD = 'email'
+#     REQUIRED_FIELDS = []
+#     objects = UserManager()
+#
+#     def __str__(self):
+#         return self.email + ' ' + self.get_full_name()
 
-    def __str__(self):
-        return self.email + ' ' + self.get_full_name()
+
+User = get_user_model()
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, verbose_name='profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='profile')
     location = CountryField(verbose_name='Country', null=True, blank=True)
     flights = models.IntegerField(default=0, verbose_name='Flights', editable=False)
     hours = models.FloatField(default=0, verbose_name='Hours', editable=False)

@@ -8,7 +8,6 @@ export default createStore({
     jwt: {
 
     },
-    user: false,
     error_message: ''
   },
   mutations: {
@@ -28,12 +27,18 @@ export default createStore({
     },
     setError(state, message){
       state.error_message = message
+    },
+    setUser(state, user){
+      state.user = user
     }
   },
   getters:{
     isLoggedIn(state){
       return state.jwt.access
     },
+    user(state){
+      return state.user
+    }
   },
   actions: {
     logIn(context, data){
@@ -68,6 +73,12 @@ export default createStore({
       const toastLiveExample = document.getElementById('liveToast')
       const toast = new Toast(toastLiveExample)
       toast.hide()
+    },
+    userObtain(context){
+      axios.get('auth/users/me/')
+          .then(response =>{
+            context.commit('setUser', response.data)
+          })
     }
   },
   modules: {

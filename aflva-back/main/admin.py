@@ -10,27 +10,27 @@ class ProfileAdmin(admin.TabularInline):
     model = Profile
 
 
-class UserAdmin(admin.ModelAdmin):
-    model = User
-    list_display = ('email', 'get_full_name', 'location', 'ivao', 'vatsim')
-    readonly_fields = ('password',)
-    inlines = (ProfileAdmin,)
-    search_fields = ('email', 'first_name', 'last_name', 'profile__ivaoid', 'profile__vatsimid')
+# class UserAdmin(admin.ModelAdmin):
+#     model = User
+#     list_display = ('email', 'get_full_name', 'location', 'ivao', 'vatsim')
+#     readonly_fields = ('password',)
+#     inlines = (ProfileAdmin,)
+#     search_fields = ('email', 'first_name', 'last_name', 'profile__ivaoid', 'profile__vatsimid')
+#
+#     @admin.display
+#     def location(self, obj):
+#         return obj.profile.location
+#
+#     @admin.display
+#     def ivao(self, obj):
+#         return obj.profile.ivaoid
+#
+#     @admin.display
+#     def vatsim(self, obj):
+#         return obj.profile.vatsimid
 
-    @admin.display
-    def location(self, obj):
-        return obj.profile.location
 
-    @admin.display
-    def ivao(self, obj):
-        return obj.profile.ivaoid
-
-    @admin.display
-    def vatsim(self, obj):
-        return obj.profile.vatsimid
-
-
-admin.site.register(User, UserAdmin)
+# admin.site.register(User, UserAdmin)
 
 
 class AircraftTypeAdmin(admin.ModelAdmin):

@@ -38,7 +38,7 @@ EMAIL_PORT = os.environ.get('EMAIL_PORT')
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
-AUTH_USER_MODEL = 'main.CustomUser'
+# AUTH_USER_MODEL = 'main.CustomUser'
 
 CORS_ALLOW_HEADERS = default_headers + (
     'Access-Control-Allow-Headers',
@@ -76,7 +76,7 @@ INSTALLED_APPS = [
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(seconds=10),
-    'REFRESH_TOKEN_LIFETIME': timedelta(seconds=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=15),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': False,

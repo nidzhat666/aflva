@@ -61,7 +61,6 @@ export default {
 
 <style lang="scss" scoped>
 section{
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
