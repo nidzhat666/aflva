@@ -23,7 +23,7 @@ class FlightSerializer(serializers.ModelSerializer):
 class PilotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pilot
-        fields = '__all__'
+        fields = ('id', 'callsign', 'status', 'hours', 'flights')
 
 
 class ProfileSerializer(CountryFieldMixin, serializers.ModelSerializer):
