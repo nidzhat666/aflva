@@ -15,14 +15,16 @@ import HomeStatsSection from "@/components/sections/HomeStatsSection";
 import OnlineCardsSection from "@/components/sections/OnlineCardsSection";
 import LogosSection from "@/components/sections/LogosSection";
 import ContactUsSection from "@/components/sections/ContactUsSection";
+// import { Tooltip } from "bootstrap";
 
 export default {
   name: 'Home',
   components: {
     Engine, HomeTabsSection, HomeStatsSection, OnlineCardsSection, LogosSection, ContactUsSection
   },
-  created() {
-
+  mounted() {
+    console.log('home', this.$refs.info)
+    // new Tooltip(this.$refs.info)
   }
 }
 </script>

@@ -26,7 +26,7 @@
           <td style="margin: auto;">
             <img style="width: 18px;" src="/static/countries/ru.png" alt="">
           </td>
-          <td data-bs-toggle="tooltip" data-bs-placement="top" title="Koltsovo Airport">UUEE</td>
+          <td data-bs-toggle="tooltip" data-bs-placement="top" title="Koltsovo Airport" ref="info">UUEE</td>
           <td style="margin: auto;">
             <img style="width: 18px;" src="/static/countries/ru.png" alt="">
           </td>
@@ -54,6 +54,7 @@ export default {
     items: Array
   },
   mounted() {
+    // console.log(this.$refs.info)
     Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         .forEach(tooltipNode => {
           new Tooltip(tooltipNode)

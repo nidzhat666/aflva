@@ -109,7 +109,7 @@
                 <img style="width: 22px;" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png"
                      alt="">
               </td>
-              <td title="AFL7122 - T154M (RA-85669)">Igor Leukhin</td>
+              <td title="AFL7122 - T154M (RA-85669)" ref="info">Igor Leukhin</td>
               <td title="Volgograd, Volgograd Airport">URWW</td>
               <td title="Yekaterinburg, Koltsovo Airport">USSS</td>
             </tr>
@@ -186,16 +186,19 @@
 </template>
 
 <script>
-import {Tooltip} from 'bootstrap/dist/js/bootstrap.esm.min.js'
+// import {Tooltip} from 'bootstrap/dist/js/bootstrap.esm.min.js'
+import {Tooltip} from 'bootstrap'
 
 export default {
   name: "OnlineCardsSection",
   mounted() {
-    Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        .forEach(tooltipNode => {
-          new Tooltip(tooltipNode)
-          console.log(tooltipNode)
-        })
+    console.log(this.$refs.info)
+    new Tooltip(this.$refs.info)
+    // Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    //     .forEach(tooltipNode => {
+    //       new Tooltip(tooltipNode)
+    //       console.log(tooltipNode)
+    //     })
   },
 }
 </script>
