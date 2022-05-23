@@ -7,32 +7,32 @@ from django.contrib.auth import get_user_model
 from .manager import UserManager
 
 
-# class CustomUser(AbstractUser):
-#     username = models.CharField(
-#         _('username'),
-#         max_length=150,
-#         unique=False,
-#         help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
-#         error_messages={
-#             'unique': _("A user with that username already exists."),
-#         },
-#         null=True,
-#         blank=True
-#     )
-#     email = models.EmailField(_('email address'), unique=True)
-#     USERNAME_FIELD = 'email'
-#     REQUIRED_FIELDS = []
-#     objects = UserManager()
-#
-#     class Meta:
-#         db_table = 'auth_user'
-#
-#     def __str__(self):
-#         return self.email + ' ' + self.get_full_name()
-#
 class CustomUser(AbstractUser):
+    username = models.CharField(
+        _('username'),
+        max_length=150,
+        unique=False,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        error_messages={
+            'unique': _("A user with that username already exists."),
+        },
+        null=True,
+        blank=True
+    )
+    email = models.EmailField(_('email address'), unique=True)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+    objects = UserManager()
+
     class Meta:
         db_table = 'auth_user'
+
+    def __str__(self):
+        return self.email + ' ' + self.get_full_name()
+
+# class CustomUser(AbstractUser):
+#     class Meta:
+#         db_table = 'auth_user'
 
 
 User = get_user_model()
