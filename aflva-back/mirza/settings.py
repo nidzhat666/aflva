@@ -116,8 +116,8 @@ BACKUPS_DIR = BASE_DIR / "backups"
 
 DJOSER = {
     'SERIALIZERS': {
-        'user': 'main.serializers.UserSerializer',
-        'current_user': 'main.serializers.UserSerializer',
+        'user': 'api.serializers.UserSerializer',
+        'current_user': 'api.serializers.UserSerializer',
     }
 }
 
