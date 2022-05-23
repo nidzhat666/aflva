@@ -56,7 +56,7 @@ class Pilot(models.Model):
             self._flights = self.flights_query.count()
             if not self._flights:
                 self._flights = 0
-        return self._flights
+        return self._flights + self.additional_flights
 
     @property
     def hours(self):
@@ -64,7 +64,7 @@ class Pilot(models.Model):
             self._hours = sum([i.flight_time for i in self.flights_query])
             if not self._hours:
                 self._hours = 0
-        return self._hours
+        return self._hours + self.additional_hours
 
     @property
     def rating(self):

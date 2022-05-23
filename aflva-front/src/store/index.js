@@ -75,7 +75,7 @@ export default createStore({
       toast.hide()
     },
     userObtain(context){
-      axios.get('auth/users/me/')
+      return axios.get('auth/users/me/')
           .then(response =>{
             context.commit('setUser', response.data)
           })

@@ -29,7 +29,7 @@ class PilotSerializer(serializers.ModelSerializer):
 class ProfileSerializer(CountryFieldMixin, serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ('id', 'flights', 'hours', 'ivaoid', 'location', 'now', 'vatsimid')
+        fields = ('id', 'ivaoid', 'location', 'now', 'vatsimid')
 
 
 class UserSerializer(serializers.ModelSerializer):

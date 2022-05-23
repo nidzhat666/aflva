@@ -19,7 +19,7 @@
             <div class="card-body text-center">
               <img src="@/assets/img/pilot-image.png" alt="avatar"
                    class="rounded-circle img-fluid" style="width: 150px;">
-              <h5 class="my-3">{{this.$store.getters.user?.get_full_name}}</h5>
+              <h5 class="my-3">{{user?.get_full_name}}</h5>
               <p class="text-muted mb-1 row justify-content-center">
                 <span class="col-auto"><b>120</b> flights</span><span class="col-auto"><b>433</b> hours</span>
               </p>
@@ -37,7 +37,7 @@
                   <p class="mb-0">Full Name</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted mb-0">{{this.$store.getters.user?.get_full_name}}</p>
+                  <p class="text-muted mb-0">{{user?.get_full_name}}</p>
                 </div>
               </div>
               <hr>
@@ -46,7 +46,7 @@
                   <p class="mb-0">Country</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted mb-0">{{this.$store.getters.user?.profile.location}}</p>
+                  <p class="text-muted mb-0">{{user?.profile?.location}}</p>
                 </div>
               </div>
               <hr>
@@ -55,7 +55,7 @@
                   <p class="mb-0">Location</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted mb-0"><b>{{this.$store.getters.user?.profile.now}}</b></p>
+                  <p class="text-muted mb-0"><b>{{user?.profile?.now}}</b></p>
                 </div>
               </div>
               <hr>
@@ -92,13 +92,25 @@
 </template>
 
 <script>
+import {secToHours} from "@/utils/timeUtil";
+
 export default {
   name: "Profile",
   data(){
+    return{
+      user: {}
+    }
+  },
+  computed:{
+    h
   },
   created() {
     if (!this.$store.getters.user){
-      this.$store.dispatch('userObtain')
+      this.$store.dispatch('userObtain').then(()=>{
+        this.user = this.$store.getters.user
+      })
+    } else {
+      this.user = this.$store.getters.user
     }
   }
 }
