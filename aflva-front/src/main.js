@@ -10,7 +10,7 @@ import 'bootstrap/dist/js/bootstrap.bundle'
 let isRefreshing = false;
 let refreshSubscribers = [];
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000/api'
+axios.defaults.baseURL = 'https://afl-va.ru/api'
 axios.interceptors.response.use(response => {
     return response
 }, error => {
