@@ -66,7 +66,7 @@ INSTALLED_APPS = [
     'api',
     'django_cleanup',
     'rest_framework',
-    'silk',
+    # 'silk',
     'drf_yasg',
     'drf_api_logger',
     'rest_framework_simplejwt',
@@ -130,7 +130,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'silk.middleware.SilkyMiddleware',
+    # 'silk.middleware.SilkyMiddleware',
     'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware'
 ]
 DRF_API_LOGGER_DATABASE = True
@@ -160,8 +160,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mirza.wsgi.application'
 
-SILKY_AUTHENTICATION = True
-SILKY_AUTHORISATION = True
+# SILKY_AUTHENTICATION = True
+# SILKY_AUTHORISATION = True
 # print(os.environ.get('POSTGRES_PASSWORD'))
 DATABASES = {
     'default': {
