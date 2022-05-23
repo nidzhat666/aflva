@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 from pathlib import Path
+from datetime import timedelta
 
 from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
@@ -72,8 +73,6 @@ INSTALLED_APPS = [
     'djoser',
     'corsheaders'
 ]
-
-from datetime import timedelta
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(seconds=10),

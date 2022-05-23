@@ -1,11 +1,11 @@
 <template>
   <div class="header">
-    <div class="container d-flex flex-column flex-md-row align-items-center p-3 ">
+    <div class="container d-flex flex-column flex-md-row align-items-center p-3 justify-content-center">
       <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
         <img class="logo" src="../assets/img/aflva_logo.png" alt="">
       </a>
 
-      <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+      <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto" v-bind:class="{'d-none': !$store.getters.isLoggedIn}">
         <div>
           <a class="me-3 py-2 text-dark text-decoration-none text-white" href="#">Profile</a>
         </div>

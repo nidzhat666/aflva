@@ -1,6 +1,6 @@
 <template>
   <section @mousemove="move">
-    <form class="form-signin" @submit.prevent="">
+    <form class="form-signin" @submit.prevent="submit">
       <!--    <img class="mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">-->
       <h1 class="h3 mb-3 font-weight-normal">Sign In</h1>
       <div class="mt-3">
@@ -18,7 +18,7 @@
           </label>
         </div>
       </div>
-      <button class="btn btn-lg btn-primary btn-block" type="submit" v-on:click="submit">Sign in</button>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
     </form>
   </section>
 

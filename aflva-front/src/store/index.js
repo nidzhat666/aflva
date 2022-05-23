@@ -41,6 +41,7 @@ export default createStore({
           .then((response)=>{
             context.commit('updateStorage', response.data)
             router.push({ name: 'Home' })
+            context.dispatch('hideError')
           })
     },
     initStorage(context){
@@ -56,13 +57,17 @@ export default createStore({
     },
     logOut(context){
       context.commit('deleteStorage')
-      console.log('delete', context)
     },
     handleError(context, error){
-      context.commit('setError', error.detail)
+      context.commit('setError', error.response.data?.detail || error.message)
       const toastLiveExample = document.getElementById('liveToast')
       const toast = new Toast(toastLiveExample)
       toast.show()
+    },
+    hideError(){
+      const toastLiveExample = document.getElementById('liveToast')
+      const toast = new Toast(toastLiveExample)
+      toast.hide()
     }
   },
   modules: {

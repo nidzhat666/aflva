@@ -4,7 +4,7 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import axios from "axios";
-import 'bootstrap/dist/js/bootstrap.min.js'
+import 'bootstrap'
 import 'bootstrap/dist/js/bootstrap.bundle'
 
 let isRefreshing = false;
@@ -14,16 +14,15 @@ axios.defaults.baseURL = 'http://127.0.0.1:8000/api'
 axios.interceptors.response.use(response => {
     return response
 }, error => {
-    const { config, response: { status, data } } = error;
+    const { config, response: { status } } = error;
     const originalRequest = config;
     if (status === 401 && config.url === 'auth/jwt/refresh/'){
-        store.dispatch('handleError', data)
+        store.dispatch('handleError', error)
         store.dispatch('logOut')
         router.push({name: 'Login'})
     }
     if (status === 401 && store.state.jwt.refresh) {
         if (!isRefreshing) {
-            console.log(store.getters.isLoggedIn)
             isRefreshing = true;
             store.dispatch('refreshToken').then((response)=>{
                 isRefreshing = false;
@@ -41,7 +40,7 @@ axios.interceptors.response.use(response => {
             });
         });
     } else {
-        store.dispatch('handleError', data)
+        store.dispatch('handleError', error)
         return Promise.reject(error);
     }
     }
