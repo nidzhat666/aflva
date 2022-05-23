@@ -9,12 +9,6 @@ from main.serializers import AirportSerializer
 User = get_user_model()
 
 
-class BookShortSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Book
-        fields = ['status', 'altitude', 'speed', 'longitude', 'latitude']
-
-
 class FlightSerializer(serializers.ModelSerializer):
     class Meta:
         model = Flight
@@ -42,3 +36,28 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'get_full_name', 'email', 'profile', 'pilot']
+
+
+class UserPublicSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(many=False)
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'get_full_name', 'profile']
+
+
+class Pilot4BookSerializer(serializers.ModelSerializer):
+    now = AirportSerializer(many=False)
+    profile = UserSerializer(many=False)
+
+    class Meta:
+        model = Pilot
+        fields = ('id', 'callsign', 'status', 'hours', 'flights', 'rating', 'now', 'profile')
+
+
+class BookShortSerializer(serializers.ModelSerializer):
+    pilot = Pilot4BookSerializer(many=False)
+
+    class Meta:
+        model = Book
+        fields = ['status', 'altitude', 'speed', 'longitude', 'latitude', 'pilot']
