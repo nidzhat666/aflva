@@ -66,7 +66,7 @@ INSTALLED_APPS = [
     'api',
     'django_cleanup',
     'rest_framework',
-    # 'silk',
+    'silk',
     'drf_yasg',
     'drf_api_logger',
     'rest_framework_simplejwt',
