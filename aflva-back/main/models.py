@@ -30,10 +30,6 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email + ' ' + self.get_full_name()
 
-# class CustomUser(AbstractUser):
-#     class Meta:
-#         db_table = 'auth_user'
-
 
 User = get_user_model()
 
