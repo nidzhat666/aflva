@@ -24,6 +24,9 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = []
     objects = UserManager()
 
+    class Meta:
+        db_table = 'auth_user'
+
     def __str__(self):
         return self.email + ' ' + self.get_full_name()
 
