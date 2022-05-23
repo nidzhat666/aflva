@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from aeroflot.models import Flight, Book, Pilot, Company
 from main.models import Profile
-from main.serializers import AirportSerializer
+from main.serializers import AirportSerializer, FleetSerializer
 
 User = get_user_model()
 
@@ -64,7 +64,8 @@ class Pilot4BookSerializer(serializers.ModelSerializer):
 class BookShortSerializer(serializers.ModelSerializer):
     pilot = Pilot4BookSerializer(many=False)
     company = CompanySerializer(many=False)
+    aircraft = FleetSerializer(many=False)
 
     class Meta:
         model = Book
-        fields = ['status', 'altitude', 'speed', 'longitude', 'latitude', 'pilot', 'company']
+        fields = ['status', 'altitude', 'speed', 'longitude', 'latitude', 'pilot', 'company', 'callsign', 'aircraft']
