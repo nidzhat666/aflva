@@ -2,7 +2,7 @@ from django_countries.serializers import CountryFieldMixin
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from aeroflot.models import Flight, Book, Pilot
+from aeroflot.models import Flight, Book, Pilot, Company
 from main.models import Profile
 from main.serializers import AirportSerializer
 
@@ -38,6 +38,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['first_name', 'last_name', 'get_full_name', 'email', 'profile', 'pilot']
 
 
+class CompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
+        fields = ('id', 'name', 'callsign', 'icao', 'iata', 'hub', 'logo')
+
+
 class UserPublicSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(many=False)
 
@@ -57,7 +63,8 @@ class Pilot4BookSerializer(serializers.ModelSerializer):
 
 class BookShortSerializer(serializers.ModelSerializer):
     pilot = Pilot4BookSerializer(many=False)
+    company = CompanySerializer(many=False)
 
     class Meta:
         model = Book
-        fields = ['status', 'altitude', 'speed', 'longitude', 'latitude', 'pilot']
+        fields = ['status', 'altitude', 'speed', 'longitude', 'latitude', 'pilot', 'company']
