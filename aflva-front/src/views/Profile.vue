@@ -21,7 +21,8 @@
                    class="rounded-circle img-fluid" style="width: 150px;">
               <h5 class="my-3">{{user?.get_full_name}}</h5>
               <p class="text-muted mb-1 row justify-content-center">
-                <span class="col-auto"><b>120</b> flights</span><span class="col-auto"><b>433</b> hours</span>
+                <span class="col-auto"><b>{{ user.pilot.flights }}</b> flights</span>
+                <span class="col-auto"><b>{{ hours }}</b> hours</span>
               </p>
               <p class="text-muted mb-1">
                 <span><b>100</b> points</span>
@@ -102,7 +103,9 @@ export default {
     }
   },
   computed:{
-    h
+    hours(){
+      return secToHours(this.user?.pilot.hours)
+    }
   },
   created() {
     if (!this.$store.getters.user){
