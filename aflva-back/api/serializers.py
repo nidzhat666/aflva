@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from aeroflot.models import Flight, Book, Pilot
 from main.models import Profile
+from main.serializers import AirportSerializer
 
 User = get_user_model()
 
@@ -21,6 +22,8 @@ class FlightSerializer(serializers.ModelSerializer):
 
 
 class PilotSerializer(serializers.ModelSerializer):
+    now = AirportSerializer(many=False)
+
     class Meta:
         model = Pilot
         fields = ('id', 'callsign', 'status', 'hours', 'flights', 'rating', 'now')

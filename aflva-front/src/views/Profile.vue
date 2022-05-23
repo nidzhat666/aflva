@@ -25,7 +25,7 @@
                 <span class="col-auto"><b>{{ hours }}</b> hours</span>
               </p>
               <p class="text-muted mb-1">
-                <span><b>100</b> points</span>
+                <span><b>{{ user?.pilot.rating }}</b> points</span>
               </p>
             </div>
           </div>

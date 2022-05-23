@@ -71,7 +71,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PilotSerializer(serializers.ModelSerializer):
-    permission_classes = (IsAuthenticated,)
     profile = UserSerializer(read_only=True)
 
     class Meta:
@@ -80,16 +79,12 @@ class PilotSerializer(serializers.ModelSerializer):
 
 
 class AirportSerializer(serializers.ModelSerializer):
-    permission_classes = (IsAuthenticated,)
-
     class Meta:
         model = Airport
         fields = '__all__'
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    permission_classes = (IsAuthenticated,)
-
     class Meta:
         model = Company
         fields = '__all__'
