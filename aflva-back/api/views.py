@@ -1,11 +1,16 @@
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 from django.shortcuts import get_object_or_404
+from django.db.models import Count, Avg
 from rest_framework import viewsets, mixins, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
-from aeroflot.models import Book
+from aeroflot.models import Book, Pilot
 from main.models import Penalty
-from .serializers import FlightSerializer, BookShortSerializer
+from .serializers import FlightSerializer, BookShortSerializer, PilotTopSerializer
 
 
 class BookViewSet(viewsets.ModelViewSet):
@@ -21,6 +26,21 @@ class BookViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
+
+
+class StatsViewSet(viewsets.GenericViewSet):
+    @action(detail=False, methods=['GET'])
+    def pilots_top(self, request):
+        prev_month = (datetime.now() - relativedelta(months=1)).month
+        top_pilots = Pilot.objects.filter(flight__dep_time__month=prev_month, flight__points__isnull=False) \
+                         .select_related('profile') \
+                         .prefetch_related('flight') \
+                         .annotate(flight_count=Count('flight'),
+                                   average_rating=Avg('flight__points')) \
+                         .filter(flight_count__gt=5) \
+                         .order_by('-flight_count', '-average_rating')[:5]
+        serializer = PilotTopSerializer(top_pilots, many=True)
+        return Response(serializer.data)
 
 
 class FlightViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

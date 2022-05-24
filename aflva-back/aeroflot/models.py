@@ -81,6 +81,10 @@ class Pilot(models.Model):
             return flight.arrival_airport
         return None
 
+    @property
+    def full_name(self):
+        return self.profile.get_full_name()
+
     class Meta:
         verbose_name_plural = "Pilots"
 

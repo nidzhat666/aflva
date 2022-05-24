@@ -71,3 +71,12 @@ class BookShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ['status', 'altitude', 'speed', 'longitude', 'latitude', 'pilot', 'company', 'callsign', 'aircraft', 'dep_airport', 'arr_airport']
+
+
+class PilotTopSerializer(serializers.ModelSerializer):
+    flight_count = serializers.IntegerField()
+    average_rating = serializers.IntegerField()
+
+    class Meta:
+        model = Pilot
+        fields = ('full_name', 'flight_count', 'average_rating')

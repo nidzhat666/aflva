@@ -1,16 +1,12 @@
 from django.urls import path, include
 from rest_framework.routers import SimpleRouter
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView
-)
 
-from .views import BookViewSet, FlightViewSet
+from .views import BookViewSet, FlightViewSet, StatsViewSet
 
 router = SimpleRouter()
 router.register(r'books', BookViewSet, basename='books')
 router.register(r'flights', FlightViewSet, basename='flights')
+router.register(r'stats', StatsViewSet, basename='stats')
 
 urlpatterns = [
     path('auth/', include('djoser.urls')),
