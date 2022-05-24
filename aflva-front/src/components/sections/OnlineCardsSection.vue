@@ -1,10 +1,10 @@
 <template>
   <div class="container mt-3">
-    <div class="row ">
+    <div class="row">
       <div class="card col shadow-lg">
         <div class="card-body">
-          <h5 class="card-title">Online</h5>
-          <table class="table">
+          <h5 class="card-title" v-if="online.length">Online</h5>
+          <table class="table" v-if="online.length">
             <thead>
             <tr>
               <td>Airline</td>
@@ -15,86 +15,44 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
+            <tr v-for="book in online" v-bind:key="book">
               <td>
-                <img style="width: 22px;" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png"
-                     alt="">
+                <span class="label label-default" v-tooltip:top="book.company.name">
+                  <img style="width: 22px;" :src="book.company.logo"
+                       alt="">
+                </span>
+              </td>
+              <th>
+                <span class="label label-default" v-tooltip:top="'Cruise'">
+                  <img style="width: 22px;" src="@/assets/statuses/cruise.png"
+                       alt="">
+                </span>
+              </th>
+              <th>
+                <span class="label label-default" v-tooltip:top="get_book_tooltip_pilot(book)">
+                  {{ book.pilot.profile.get_full_name }}
+                </span>
+              </th>
+              <td>
+                <span class="label label-default" v-tooltip:top="book.dep_airport.name">
+                  {{ book.dep_airport.icao_code }}
+                </span>
               </td>
               <td>
-                <img style="width: 12px;" src="http://nzmaslo.ru:8080/static/images/cruise.png" title="Cruise">
+                <span class="label label-default" v-tooltip:top="book.arr_airport.name">
+                  {{ book.arr_airport.icao_code }}
+                </span>
               </td>
-              <td title="AFL7122 - T154M (RA-85669)">Igor Leukhin</td>
-              <td title="Volgograd, Volgograd Airport" data-bs-toggle="tooltip" data-bs-placement="top">URWW</td>
-              <td title="Yekaterinburg, Koltsovo Airport">USSS</td>
-            </tr>
-            <tr>
-              <td>
-                <img style="width: 22px;" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png"
-                     alt="">
-              </td>
-              <td>
-                <img style="width: 12px;" src="http://nzmaslo.ru:8080/static/images/cruise.png" title="Cruise">
-              </td>
-              <td title="AFL7122 - T154M (RA-85669)">Igor Leukhin</td>
-              <td title="Volgograd, Volgograd Airport">URWW</td>
-              <td title="Yekaterinburg, Koltsovo Airport">USSS</td>
-            </tr>
-            <tr>
-              <td>
-                <img style="width: 22px;" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png"
-                     alt="">
-              </td>
-              <td>
-                <img style="width: 12px;" src="http://nzmaslo.ru:8080/static/images/cruise.png" title="Cruise">
-              </td>
-              <td title="AFL7122 - T154M (RA-85669)">Igor Leukhin</td>
-              <td title="Volgograd, Volgograd Airport">URWW</td>
-              <td title="Yekaterinburg, Koltsovo Airport">USSS</td>
-            </tr>
-            <tr>
-              <td>
-                <img style="width: 22px;" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png"
-                     alt="">
-              </td>
-              <td>
-                <img style="width: 12px;" src="http://nzmaslo.ru:8080/static/images/cruise.png" title="Cruise">
-              </td>
-              <td title="AFL7122 - T154M (RA-85669)">Igor Leukhin</td>
-              <td title="Volgograd, Volgograd Airport">URWW</td>
-              <td title="Yekaterinburg, Koltsovo Airport">USSS</td>
-            </tr>
-            <tr>
-              <td>
-                <img style="width: 22px;" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png"
-                     alt="">
-              </td>
-              <td>
-                <img style="width: 12px;" src="http://nzmaslo.ru:8080/static/images/cruise.png" title="Cruise">
-              </td>
-              <td title="AFL7122 - T154M (RA-85669)">Igor Leukhin</td>
-              <td title="Volgograd, Volgograd Airport">URWW</td>
-              <td title="Yekaterinburg, Koltsovo Airport">USSS</td>
-            </tr>
-            <tr>
-              <td>
-                <img style="width: 22px;" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png"
-                     alt="">
-              </td>
-              <td>
-                <img style="width: 12px;" src="http://nzmaslo.ru:8080/static/images/cruise.png" title="Cruise">
-              </td>
-              <td title="AFL7122 - T154M (RA-85669)">Igor Leukhin</td>
-              <td title="Volgograd, Volgograd Airport">URWW</td>
-              <td title="Yekaterinburg, Koltsovo Airport">USSS</td>
             </tr>
             </tbody>
           </table>
+          <h2 class="m-0" v-else>No Active Flights 💤</h2>
         </div>
       </div>
       <div class="card col shadow-lg">
         <div class="card-body">
-          <h5 class="card-title">Booked flights</h5>
-          <table class="table">
+          <h5 class="card-title" v-if="booked.length">Booked flights</h5>
+          <table class="table" v-if="booked.length">
             <thead>
             <tr>
               <td>Airline</td>
@@ -104,40 +62,38 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
+            <tr v-for="book in bookings" v-bind:key="book">
               <td>
-                <img style="width: 22px;" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png"
-                     alt="">
+                <span class="label label-default" v-tooltip:top="book.company.name">
+                  <img style="width: 22px;" :src="book.company.logo"
+                       alt="">
+                </span>
+
               </td>
-              <td title="AFL7122 - T154M (RA-85669)" ref="info">Igor Leukhin</td>
-              <td title="Volgograd, Volgograd Airport">URWW</td>
-              <td title="Yekaterinburg, Koltsovo Airport">USSS</td>
-            </tr>
-            <tr>
+              <th>
+                <span class="label label-default" v-tooltip:top="get_book_tooltip_pilot(book)">
+                  {{ book.pilot.profile.get_full_name }}
+                </span>
+              </th>
               <td>
-                <img style="width: 22px;" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png"
-                     alt="">
+                <span class="label label-default" v-tooltip:top="book.dep_airport.name">
+                  {{ book.dep_airport.icao_code }}
+                </span>
               </td>
-              <td title="AFL7122 - T154M (RA-85669)">Igor Leukhin</td>
-              <td title="Volgograd, Volgograd Airport">URWW</td>
-              <td title="Yekaterinburg, Koltsovo Airport">USSS</td>
-            </tr>
-            <tr>
               <td>
-                <img style="width: 22px;" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png"
-                     alt="">
+                <span class="label label-default" v-tooltip:top="book.arr_airport.name">
+                  {{ book.arr_airport.icao_code }}
+                </span>
               </td>
-              <td title="AFL7122 - T154M (RA-85669)">Igor Leukhin</td>
-              <td title="Volgograd, Volgograd Airport">URWW</td>
-              <td title="Yekaterinburg, Koltsovo Airport">USSS</td>
             </tr>
             </tbody>
           </table>
+          <h2 class="m-0" v-else>No Booked Flights 💤</h2>
         </div>
       </div>
       <div class="card col shadow-lg">
         <div class="card-body">
-          <h5 class="card-title">The Best in January</h5>
+          <h5 class="card-title">The Best in {{month}}</h5>
           <table class="table">
             <thead>
             <tr>
@@ -147,35 +103,10 @@
             </tr>
             </thead>
             <tbody>
-
-            <tr>
-              <td>Artem Grigorev</td>
-              <td>33</td>
-              <td>107</td>
-            </tr>
-
-            <tr>
-              <td>Artyom Bondarev</td>
-              <td>28</td>
-              <td>106</td>
-            </tr>
-
-            <tr>
-              <td>Sergey Kotelnikov</td>
-              <td>25</td>
-              <td>105</td>
-            </tr>
-
-            <tr>
-              <td>Viktor Prokopishin</td>
-              <td>24</td>
-              <td>114</td>
-            </tr>
-
-            <tr>
-              <td>Istvan Banki</td>
-              <td>24</td>
-              <td>110</td>
+            <tr v-for="pilot in pilots_top" v-bind:key="pilot">
+              <td>{{ pilot.full_name }}</td>
+              <td>{{ pilot.flight_count }}</td>
+              <td>{{ pilot.average_rating }}</td>
             </tr>
             </tbody>
           </table>
@@ -186,20 +117,60 @@
 </template>
 
 <script>
-// import {Tooltip} from 'bootstrap/dist/js/bootstrap.esm.min.js'
-import {Tooltip} from 'bootstrap'
+import axios from "axios";
 
 export default {
   name: "OnlineCardsSection",
-  mounted() {
-    console.log(this.$refs.info)
-    new Tooltip(this.$refs.info)
-    // Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    //     .forEach(tooltipNode => {
-    //       new Tooltip(tooltipNode)
-    //       console.log(tooltipNode)
-    //     })
+  data() {
+    return {
+      bookings: [],
+      pilots_top:[],
+      month: null
+    }
   },
+  computed: {
+    booked() {
+      return this.bookings.filter((obj) => {
+        if (obj.status === 'booked') return obj
+      })
+    },
+    online() {
+      return this.bookings.filter((obj) => {
+        if (obj.status !== 'booked') return obj
+      })
+    },
+  },
+  mounted() {
+    this.getBookings()
+    this.get_top_pilots()
+    this.interval = setInterval(this.getBookings, 10000)
+  },
+  unmounted() {
+    clearInterval(this.interval)
+  },
+  methods: {
+    getBookings() {
+      axios.get('books/')
+          .then(response => {
+            this.tooltipsRemove()
+            this.bookings = response.data
+          })
+    },
+    get_top_pilots(){
+      axios.get('stats/pilots_top/').then(response=>{
+        this.pilots_top = response.data.top
+        this.month = new Date(2022, response.data.month, 0).toLocaleString('default', { month: 'long' });
+      })
+    },
+    get_book_tooltip_pilot(book) {
+      return `${book.callsign} - ${book.aircraft.aircraft_type.aircraft_icao.aircraft_icao} (${book.aircraft.aircraft_registration})`
+    },
+    tooltipsRemove(){
+      document.querySelectorAll('.tooltip').forEach(function (a) {
+        a.remove()
+      })
+    }
+  }
 }
 </script>
 
@@ -208,5 +179,10 @@ export default {
   margin: 1rem;
   height: 100%;
   min-width: 350px;
+}
+@media (min-width: 1200px) {
+  .container{
+    max-width: 1500px;
+  }
 }
 </style>

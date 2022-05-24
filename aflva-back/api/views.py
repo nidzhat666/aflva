@@ -40,7 +40,7 @@ class StatsViewSet(viewsets.GenericViewSet):
                          .filter(flight_count__gt=5) \
                          .order_by('-flight_count', '-average_rating')[:5]
         serializer = PilotTopSerializer(top_pilots, many=True)
-        return Response(serializer.data)
+        return Response(dict(top=serializer.data, month=prev_month))
 
 
 class FlightViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

@@ -21,8 +21,8 @@
                    class="rounded-circle img-fluid" style="width: 150px;">
               <h5 class="my-3">{{user?.get_full_name}}</h5>
               <p class="text-muted mb-1 row justify-content-center">
-                <span class="col-auto"><b>{{ user.pilot.flights }}</b> flights</span>
-                <span class="col-auto"><b>{{ hours }}</b> hours</span>
+                <span class="col-auto"><b>{{ user?.pilot.flights }}</b> flights</span>
+                <span class="col-auto" :title="full_hours"><b>{{ hours }}</b> hours</span>
               </p>
               <p class="text-muted mb-1">
                 <span><b>{{ user?.pilot.rating }}</b> points</span>
@@ -47,7 +47,7 @@
                   <p class="mb-0">Country</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted mb-0">{{user?.profile?.location}}</p>
+                  <p class="text-muted mb-0">{{user?.profile.location}}</p>
                 </div>
               </div>
               <hr>
@@ -56,7 +56,7 @@
                   <p class="mb-0">Location</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted mb-0"><b>{{user?.profile?.now}}</b></p>
+                  <p class="text-muted mb-0" :title="user?.pilot.now.name" ref="info"><b>{{user?.pilot.now.icao_code}}</b></p>
                 </div>
               </div>
               <hr>
@@ -70,17 +70,17 @@
               </div>
               <hr>
               <div class="row">
-                <div class="col-sm-3">
+                <div class="col-sm-3" v-if="user?.profile.vatsimid">
                   <p class="mb-0">Vatsim ID</p>
                 </div>
-                <div class="col-sm-3">
-                  <p class="text-muted mb-0"><b>1300611</b></p>
+                <div class="col-sm-3" :class="{'col-sm-9': !user?.profile.ivaoid }" v-if="user?.profile.vatsimid">
+                  <p class="text-muted mb-0"><b>{{user?.profile.vatsimid}}</b></p>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-3" v-if="user?.profile.ivaoid">
                   <p class="mb-0">IVAO ID</p>
                 </div>
-                <div class="col-sm-3">
-                  <p class="text-muted mb-0"><b>1000225</b></p>
+                <div class="col-sm-3" :class="{'col-sm-9': !user?.profile.vatsimid }" v-if="user?.profile.ivaoid">
+                  <p class="text-muted mb-0"><b>{{user?.profile.ivaoid}}</b></p>
                 </div>
               </div>
             </div>
@@ -93,28 +93,36 @@
 </template>
 
 <script>
-import {secToHours} from "@/utils/timeUtil";
+import {secToHours, secFormat} from "@/utils/timeUtil";
+import {tooltipUpdate} from "@/utils/templateUtil";
 
 export default {
   name: "Profile",
-  data(){
-    return{
-      user: {}
-    }
-  },
   computed:{
+    user(){
+      return this.$store.getters.user
+    },
     hours(){
       return secToHours(this.user?.pilot.hours)
+    },
+    full_hours(){
+      return secFormat(this.user?.pilot.hours)
     }
+  },
+  mounted() {
+    tooltipUpdate()
   },
   created() {
     if (!this.$store.getters.user){
       this.$store.dispatch('userObtain').then(()=>{
         this.user = this.$store.getters.user
+        tooltipUpdate()
       })
     } else {
       this.user = this.$store.getters.user
     }
+  },
+  methods:{
   }
 }
 </script>
