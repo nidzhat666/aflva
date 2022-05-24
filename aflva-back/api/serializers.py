@@ -16,7 +16,7 @@ class FlightSerializer(serializers.ModelSerializer):
 
 
 class PilotSerializer(serializers.ModelSerializer):
-    now = AirportSerializer(many=False)
+    now = AirportSerializer()
 
     class Meta:
         model = Pilot
@@ -30,8 +30,8 @@ class ProfileSerializer(CountryFieldMixin, serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(many=False)
-    pilot = PilotSerializer(many=False)
+    profile = ProfileSerializer()
+    pilot = PilotSerializer()
 
     class Meta:
         model = User
@@ -45,7 +45,7 @@ class CompanySerializer(serializers.ModelSerializer):
 
 
 class UserPublicSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(many=False)
+    profile = ProfileSerializer()
 
     class Meta:
         model = User
@@ -53,8 +53,8 @@ class UserPublicSerializer(serializers.ModelSerializer):
 
 
 class Pilot4BookSerializer(serializers.ModelSerializer):
-    now = AirportSerializer(many=False)
-    profile = UserSerializer(many=False)
+    now = AirportSerializer()
+    profile = UserSerializer()
 
     class Meta:
         model = Pilot
@@ -62,10 +62,12 @@ class Pilot4BookSerializer(serializers.ModelSerializer):
 
 
 class BookShortSerializer(serializers.ModelSerializer):
-    pilot = Pilot4BookSerializer(many=False)
-    company = CompanySerializer(many=False)
-    aircraft = FleetSerializer(many=False)
+    pilot = Pilot4BookSerializer()
+    company = CompanySerializer()
+    aircraft = FleetSerializer()
+    dep_airport = AirportSerializer()
+    arr_airport = AirportSerializer()
 
     class Meta:
         model = Book
-        fields = ['status', 'altitude', 'speed', 'longitude', 'latitude', 'pilot', 'company', 'callsign', 'aircraft']
+        fields = ['status', 'altitude', 'speed', 'longitude', 'latitude', 'pilot', 'company', 'callsign', 'aircraft', 'dep_airport', 'arr_airport']
