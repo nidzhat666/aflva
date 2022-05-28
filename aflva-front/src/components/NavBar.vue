@@ -7,60 +7,38 @@
 
       <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto" v-bind:class="{'d-none': !$store.getters.isLoggedIn}">
         <div>
-          <router-link :to="{name: 'Profile'}" class="me-3 py-2 text-dark text-decoration-none text-white">Профиль</router-link>
+          <router-link :to="{name: 'Profile'}" class="me-3 py-2 text-dark text-decoration-none text-white">Profile</router-link>
         </div>
         <div class="dropdown">
           <a class="me-3 py-2 text-dark text-decoration-none text-white dropdown-toggle" data-bs-toggle="dropdown"
              aria-expanded="false" href="#">Schedules</a>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          <ul class="dropdown-menu shadow-lg" aria-labelledby="dropdownMenuButton1">
             <li>
-              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
-                Aeroflot
-                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
-              </a>
-              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
-                Aeroflot
-                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
-              </a>
-              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
-                Aeroflot
-                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
-              </a>
-              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
-                Aeroflot
-                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
-              </a>
-              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
-                Aeroflot
-                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
-              </a>
+              <router-link class="dropdown-item d-flex justify-content-between"
+                           v-for="company in companies"  v-bind:key="company" :to="{name: 'Schedule', params:{company: company.name}}">
+                {{company.name}}
+                <img style=" width: 22px" :src="company.logo" alt="">
+              </router-link>
             </li>
           </ul>
         </div>
         <div class="dropdown">
           <a class="me-3 py-2 text-dark text-decoration-none text-white dropdown-toggle" data-bs-toggle="dropdown"
              aria-expanded="false" href="#">Fleet</a>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          <ul class="dropdown-menu shadow-lg" aria-labelledby="dropdownMenuButton1">
             <li>
-              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
-                Aeroflot
-                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
+              <a class="dropdown-item d-flex justify-content-between"
+                 v-for="company in companies"  v-bind:key="company" href="#">
+                {{company.name}}
+                <img style=" width: 22px" :src="company.logo" alt="">
               </a>
-              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
-                Aeroflot
-                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
-              </a>
-              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
-                Aeroflot
-                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
-              </a>
-              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
-                Aeroflot
-                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
-              </a>
-              <a class="dropdown-item d-flex justify-content-between" href="/schedules/?company=Aeroflot">
-                Aeroflot
-                <img style="margin-left: 15px; width: 22px" src="https://storage.yandexcloud.net/aflva/uploads/company/Aeroflot.png" alt="">
+            </li>
+            <hr>
+            <li>
+              <a class="dropdown-item d-flex justify-content-between"
+                 v-for="company in retro"  v-bind:key="company" href="#">
+                {{company.name}} Retro
+                <img style="width: 22px" :src="company.logo" alt="">
               </a>
             </li>
           </ul>
@@ -78,19 +56,24 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "NavBar",
   data() {
     return {
-      tabs: [
-        {'text': 'Schedules'},
-        {'text': 'Fleet'},
-        {'text': 'Crew'},
-        {'text': 'Online'},
-        {'text': 'Route'},
-        {'text': 'Admin'},
-      ]
+      companies: [],
     }
+  },
+  computed:{
+    retro(){
+      return this.companies.filter(company=>company.is_retro)
+    }
+  },
+  mounted() {
+    axios.get('company/').then(response=>{
+      this.companies = response.data.results
+    })
   }
 }
 </script>

@@ -3,19 +3,19 @@
     <div class="container row m-auto">
       <div class="col">
         <p>Пилотов</p>
-        <h3><b>74</b></h3>
+        <h3><b>{{ this.overall_stats?.pilots }}</b></h3>
       </div>
       <div class="col">
         <p>Полетов</p>
-        <h3><b>18093</b></h3>
+        <h3><b>{{ this.overall_stats?.flights.count }}</b></h3>
       </div>
       <div class="col">
         <p>Самолетов</p>
-        <h3><b>520</b></h3>
+        <h3><b>{{ this.overall_stats?.fleet.count }}</b></h3>
       </div>
       <div class="col">
         <p>Часов</p>
-        <h3><b>60073</b></h3>
+        <h3><b>{{ this.overall_stats?.flights.hours }}</b></h3>
       </div>
     </div>
 
@@ -23,9 +23,19 @@
 </template>
 
 <script>
-
+import axios from "axios";
 export default {
-  name: "HomeStatsSection"
+  name: "HomeStatsSection",
+  data(){
+    return{
+      overall_stats: null
+    }
+  },
+  mounted() {
+    axios.get('stats/overall/').then(response=>{
+      this.overall_stats = response.data
+    })
+  }
 }
 </script>
 

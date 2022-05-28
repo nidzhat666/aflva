@@ -65,7 +65,7 @@
                   <p class="mb-0">Callsign</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted mb-0"><b>AFL7788</b></p>
+                  <p class="text-muted mb-0"><b>AFL{{user?.pilot.callsign}}</b></p>
                 </div>
               </div>
               <hr>

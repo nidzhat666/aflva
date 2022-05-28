@@ -1,6 +1,6 @@
 <template>
   <NavBar/>
-  <router-view/>
+  <router-view :key="$route.fullPath"/>
   <Footer></Footer>
   <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div id="liveToast" class="toast align-items-center text-bg-danger border-0"

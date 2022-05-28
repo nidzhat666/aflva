@@ -4,7 +4,7 @@
       <div class="card col shadow-lg">
         <div class="card-body">
           <h5 class="card-title" v-if="online.length">Online</h5>
-          <table class="table" v-if="online.length">
+          <table class="table align-middle" v-if="online.length">
             <thead>
             <tr>
               <td>Airline</td>
@@ -52,7 +52,7 @@
       <div class="card col shadow-lg">
         <div class="card-body">
           <h5 class="card-title" v-if="booked.length">Booked flights</h5>
-          <table class="table" v-if="booked.length">
+          <table class="table align-middle" v-if="booked.length">
             <thead>
             <tr>
               <td>Airline</td>
@@ -94,7 +94,7 @@
       <div class="card col shadow-lg">
         <div class="card-body">
           <h5 class="card-title">The Best in {{month}}</h5>
-          <table class="table">
+          <table class="table align-middle">
             <thead>
             <tr>
               <td>Name</td>
@@ -104,7 +104,7 @@
             </thead>
             <tbody>
             <tr v-for="pilot in pilots_top" v-bind:key="pilot">
-              <td>{{ pilot.full_name }}</td>
+              <td><b>{{ pilot.full_name }}</b></td>
               <td>{{ pilot.flight_count }}</td>
               <td>{{ pilot.average_rating }}</td>
             </tr>
@@ -125,7 +125,7 @@ export default {
     return {
       bookings: [],
       pilots_top:[],
-      month: null
+      month: null,
     }
   },
   computed: {
@@ -153,7 +153,7 @@ export default {
       axios.get('books/')
           .then(response => {
             this.tooltipsRemove()
-            this.bookings = response.data
+            this.bookings = response.data.results
           })
     },
     get_top_pilots(){

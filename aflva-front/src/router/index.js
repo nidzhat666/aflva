@@ -3,6 +3,7 @@ import store from "@/store";
 import Home from '../views/Home.vue'
 import Login from "@/views/Login";
 import Profile from "@/views/Profile";
+import Schedule from "@/views/Schedule";
 
 const routes = [
   {
@@ -17,6 +18,14 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: Profile,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/schedule/:company',
+    name: 'Schedule',
+    component: Schedule,
     meta: {
       requiresAuth: true
     }

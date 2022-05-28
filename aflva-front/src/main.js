@@ -4,14 +4,15 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import axios from "axios";
-import 'bootstrap'
+import 'bootstrap/dist/js/bootstrap.esm.min'
 import 'bootstrap/dist/js/bootstrap.bundle'
+import CountryFlag from 'vue-country-flag-next'
 import {Tooltip} from "bootstrap";
 
 let isRefreshing = false;
 let refreshSubscribers = [];
 
-axios.defaults.baseURL = 'https://afl-va.ru/api'
+axios.defaults.baseURL = 'http://nzmaslo.ru:3344/api'
 axios.interceptors.response.use(response => {
         return response
     }, error => {
@@ -60,6 +61,7 @@ createApp(App)
     .directive("tooltip", (el, binding, vnode, old)=>{
         new Tooltip(el, {title: binding.value, placement: binding.arg, trigger: 'hover'})
     })
+    .component('country-flag', CountryFlag)
     .use(store)
     .use(router, axios)
     .mount('#app')
