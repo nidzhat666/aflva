@@ -17,18 +17,11 @@ class AuthCustomTokenSerializer(serializers.Serializer):
     def validate(self, attrs):
         email_or_username = attrs.get('email_or_username')
         password = attrs.get('password')
-
         if email_or_username and password:
             # Check if user sent email
-            if User.objects.filter(email=email_or_username):
-                user_request = User.objects.get(email=email_or_username)
-                email_or_username = user_request.username
-                user = authenticate(username=email_or_username, password=password)
-
-            elif User.objects.filter(username=email_or_username):
-                user_request = User.objects.get(username=email_or_username)
-                email_or_username = user_request.username
-                user = authenticate(username=email_or_username, password=password)
+            user = User.objects.filter(email=email_or_username).first()
+            if user:
+                user = authenticate(email=email_or_username, password=password)
             else:
                 error = {'message': "Unknown Error"}
                 raise serializers.ValidationError(error)

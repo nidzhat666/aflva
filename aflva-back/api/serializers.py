@@ -2,7 +2,7 @@ from django_countries.serializers import CountryFieldMixin
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from aeroflot.models import Flight, Book, Pilot, Company
+from aeroflot.models import Flight, Book, Pilot, Company, Schedule
 from main.models import Profile
 from main.serializers import AirportSerializer, FleetSerializer
 
@@ -44,6 +44,12 @@ class CompanySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'callsign', 'icao', 'iata', 'hub', 'logo')
 
 
+class CompanyDedicatedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
+        fields = ('id', 'name', 'callsign', 'icao', 'iata', 'hub', 'logo', 'is_retro')
+
+
 class UserPublicSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer()
 
@@ -80,3 +86,18 @@ class PilotTopSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pilot
         fields = ('full_name', 'flight_count', 'average_rating')
+
+
+class ScheduleSerializer(serializers.ModelSerializer):
+    company = CompanySerializer()
+    dep_icao = AirportSerializer()
+    arr_icao = AirportSerializer()
+    alternate_icao = AirportSerializer()
+    flight_time = serializers.DateTimeField(format='%H:%M')
+    deptime = serializers.TimeField(format='%H:%M')
+    arrtime = serializers.TimeField(format='%H:%M')
+
+    class Meta:
+        model = Schedule
+        fields = ('company', 'flightnum', 'callsign', 'dep_icao', 'arr_icao', 'alternate_icao',
+                  'route', 'flight_level', 'distance', 'deptime', 'arrtime', 'payload_percentage', 'flight_time')

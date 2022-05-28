@@ -474,11 +474,10 @@ def login(request):
 
     if request.method == "POST":
         req = request.POST
-        try:
-            user = User.objects.get(email=req.get('email'))
-        except:
+        user = User.objects.filter(email=req.get('email')).first()
+        if not user:
             return JsonResponse({"error": "error"})
-        user = authenticate(username=user.username,
+        user = authenticate(email=user.email,
                             password=req.get('password'))
         if user is not None:
             auth_login(request, user=user)

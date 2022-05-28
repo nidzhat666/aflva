@@ -2,15 +2,17 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from django.shortcuts import get_object_or_404
-from django.db.models import Count, Avg
+from django.db.models import Count, Avg, Sum
 from rest_framework import viewsets, mixins, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from aeroflot.models import Book, Pilot
+from aeroflot.models import Book, Pilot, Flight, Fleet, Company, Schedule
 from main.models import Penalty
-from .serializers import FlightSerializer, BookShortSerializer, PilotTopSerializer
+from .serializers import (FlightSerializer, BookShortSerializer,
+                          PilotTopSerializer, CompanyDedicatedSerializer, ScheduleSerializer)
+from .utils import convert_hours
 
 
 class BookViewSet(viewsets.ModelViewSet):
@@ -28,7 +30,38 @@ class BookViewSet(viewsets.ModelViewSet):
         return super().retrieve(request, *args, **kwargs)
 
 
+class ScheduleViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = (Schedule.objects.filter(is_active=True)
+                .select_related('arr_icao', 'dep_icao', 'alternate_icao', 'company')
+                .order_by('flightnum'))
+    page_size = 20
+    serializer_class = ScheduleSerializer
+    permission_classes = (IsAuthenticated,)
+    filterset_fields = ('company__name',)
+    search_fields = ['dep_icao__icao_code', 'dep_icao__name', 'dep_icao__city',
+                     'arr_icao__icao_code', 'arr_icao__name', 'arr_icao__city', 'flightnum']
+    ordering_fields = ['dep_icao__icao_code', 'arr_icao__icao_code', 'distance', 'deptime', 'flightnum']
+
+
+class CompanyViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = CompanyDedicatedSerializer
+    queryset = Company.objects.all()
+
+
 class StatsViewSet(viewsets.GenericViewSet):
+    permission_classes = (IsAuthenticated,)
+
+    @action(detail=False, methods=['GET'])
+    def overall(self, request):
+        pilots_overall = Pilot.objects.all().aggregate(count=Count('id'),
+                                                       additional_hours=Sum('additional_hours'),
+                                                       additional_flights=Sum('additional_flights'))
+        flights_stat = Flight.objects.all().aggregate(count=pilots_overall.get('additional_flights') + Count('id'),
+                                                      hours=pilots_overall.get('additional_hours') + Sum('flight_time'))
+        flights_stat['hours'] = convert_hours(flights_stat['hours'])
+        fleet_stat = Fleet.objects.all().aggregate(count=Count('id'))
+        return Response(dict(flights=flights_stat, fleet=fleet_stat, pilots=pilots_overall.get('count')))
+
     @action(detail=False, methods=['GET'])
     def pilots_top(self, request):
         prev_month = (datetime.now() - relativedelta(months=1)).month

@@ -53,6 +53,7 @@ python-dotenv = "*"
 djoser = "*"
 djangorestframework-simplejwt = "*"
 django-cors-headers = "*"
+django-filter = "*"
 
 [dev-packages]
 

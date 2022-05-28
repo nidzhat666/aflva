@@ -23,9 +23,8 @@ def check_schedule(fleet, acf, apt, company):
 
 
 @register.simple_tag()
-def check_fleet(schedule,acf, apt):
+def check_fleet(schedule, acf, apt):
     return (apt, acf, None) in list(schedule)
-
 
 
 @register.simple_tag()
@@ -122,8 +121,6 @@ def convert_hours_minutes(seconds):
     minutes = seconds // 60
     seconds %= 60
     return "%02d:%02d" % (hour, minutes)
-
-
 
 
 @register.filter()

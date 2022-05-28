@@ -32,6 +32,10 @@ class Company(models.Model):
     class Meta:
         verbose_name_plural = "Companies"
 
+    @property
+    def is_retro(self):
+        return bool(self.fleet.filter(status='Retro').first())
+
 
 class Pilot(models.Model):
     STATUS_CHOISE = (('Just Registred', 'Just Registred'), ('Inactive', 'Inactive'), ('Active', 'Active'))
@@ -159,7 +163,7 @@ class AircraftImage(models.Model):
 
 class Schedule(models.Model):
     company = models.ForeignKey(Company, on_delete=models.PROTECT)
-    STATUS_CHOISE = (('Inactive', 'Inactive'), ('Active', 'Active'))
+    STATUS_CHOISE = (('Inactive', 'Inactive'), ('Active', 'Active'))  # TODO: delete
     TYPE_CHOISE = (('Regular', 'Regular'), ('Fly-In', 'Fly-In'), ('Charter', 'Charter'))
     flightnum = models.CharField(max_length=100, help_text='Example: SU123', verbose_name='Flight Number', unique=True)
     callsign = models.CharField(max_length=100, help_text='Example: AFL123', verbose_name='Callsign')
@@ -180,15 +184,23 @@ class Schedule(models.Model):
     arrtime = models.TimeField(verbose_name='Arrival Time', help_text='Example: 12:00', blank=True, null=True)
     flights = models.IntegerField(default=0, editable=False)
     hours = models.FloatField(default=0, editable=False)
-    status = models.CharField(max_length=100, choices=STATUS_CHOISE, default=STATUS_CHOISE[0][0])
+    status = models.CharField(max_length=100, choices=STATUS_CHOISE, default=STATUS_CHOISE[0][0])  # TODO: delete
     flight_type = models.CharField(max_length=100, choices=TYPE_CHOISE, default=TYPE_CHOISE[0][0])
     payload_percentage = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], null=True)
+    is_active = models.BooleanField(default=True, db_index=True)
 
     class Meta:
         verbose_name_plural = "Schedule"
 
     def __str__(self):
         return self.flightnum + ' - ' + self.callsign
+
+    @property
+    def flight_time(self):
+        dep = datetime.datetime.combine(datetime.date.today(), self.deptime)
+        arr = datetime.datetime.combine(datetime.date.today(), self.arrtime)
+        diff = arr - dep if dep < arr else arr - dep + datetime.timedelta(days=1)
+        return datetime.datetime.combine(datetime.date.today(), datetime.time(hour=0, minute=0, second=0))+diff
 
     def save(self, force_insert=False, force_update=False):
         if not self.distance:
@@ -247,7 +259,7 @@ class Book(models.Model):
 
 
 class Flight(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.PROTECT, null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.PROTECT, related_name='flight', null=True, blank=True)
     pilot = models.ForeignKey(Pilot, on_delete=models.PROTECT, related_name='flight', null=True, blank=True)
     flightnum = models.CharField(max_length=100, help_text='Example: SU123', verbose_name='Flight Number', blank=True,
                                  null=True)
