@@ -21,7 +21,7 @@
           <input type="text" class="form-control" placeholder="Search" aria-label="Search"
                  aria-describedby="search-area" v-model="search_query" @keyup="searchTimeOut">
         </div>
-        <div class="col-auto">
+        <div class="col-auto" v-if="(ordering.length || search_query.length)">
           <button class="btn btn-sm btn-warning h-100" @click="ordering=''; search_query=''; getSchedule()"
                   :class="{disabled: !(ordering.length || search_query.length)}">
             Reset Search & Filters
@@ -94,8 +94,13 @@
             <td class="border-start ">{{ schedule.deptime }}z</td>
             <td class="border-start" v-tooltip:top="`Arrival: ${schedule.arrtime }z`">{{ schedule.flight_time }}</td>
             <td class="border-start" v-tooltip:top="`${nmConvert(schedule.distance)}km`">{{ schedule.distance }} NM</td>
-            <td class="border-start">
-              <button class="btn btn-sm btn-success">Свободно</button>
+            <td class="border-start " v-tooltip:top="getStatus(schedule)" @click="showModal(schedule)">
+              <button class="btn btn-sm"
+                      :class="[schedule.avail && !schedule.booked ?
+                      'btn-success':
+                      'btn-danger disabled']">
+                <font-awesome-icon :icon="schedule.avail && !schedule.booked ? 'plane': 'plane-slash'"/>
+              </button>
             </td>
           </tr>
           <tr v-else>
@@ -117,13 +122,16 @@
       </div>
     </div>
   </section>
-
+  <BookModal :ai="book_data.ai" :schedule="book_data.schedule"/>
 </template>
 
 <script>
 import {BIconSearch, BIconCaretDownFill, BIconCaretUpFill, BIconArrowCounterclockwise} from 'bootstrap-icons-vue';
 import Paginate from "vuejs-paginate-next";
 import axios from "axios";
+import BookModal from "@/components/book/BookModal";
+import bookModalShow from "@/utils/bookModalShow";
+import tooltipsRemove from "@/utils/tooltipsRemove";
 
 export default {
   name: "Schedules",
@@ -134,15 +142,21 @@ export default {
       timer: null,
       search_query: '',
       ordering: '',
-      total_pages: 0
+      total_pages: 0,
+      book_data:{
+        ai: null,
+        schedule: null
+      }
     }
   },
+  mixins:[bookModalShow],
   components: {
     BIconSearch,
     BIconCaretDownFill,
     BIconCaretUpFill,
     BIconArrowCounterclockwise,
-    Paginate
+    Paginate,
+    BookModal
   },
   mounted() {
     this.getSchedule()
@@ -161,6 +175,12 @@ export default {
             this.schedules = response.data.results
             this.total_pages = response.data.total_pages
           })
+    },
+    showModal(schedule, ai){
+      this.book_data.schedule = schedule
+      this.book_data.ai = ai
+      bookModalShow()
+      tooltipsRemove()
     },
     searchTimeOut() {
       if (this.timer) {
@@ -182,6 +202,16 @@ export default {
     orderBy(field) {
       this.ordering = this.ordering === field ? '-' + field : field
       this.getSchedule()
+    },
+    getStatus(schedule){
+      if (schedule?.booked){
+        return 'Already Booked'
+      } else if (!schedule.avail){
+        return 'Unavailable'
+      }
+      else{
+        return 'Book'
+      }
     }
   }
 }

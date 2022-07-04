@@ -8,6 +8,11 @@ import 'bootstrap/dist/js/bootstrap.esm.min'
 import 'bootstrap/dist/js/bootstrap.bundle'
 import CountryFlag from 'vue-country-flag-next'
 import {Tooltip} from "bootstrap";
+import {library} from '@fortawesome/fontawesome-svg-core'
+import {faPlane, faPlaneSlash} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
+
+library.add(faPlane, faPlaneSlash)
 
 let isRefreshing = false;
 let refreshSubscribers = [];
@@ -58,10 +63,14 @@ function onRrefreshed(token) {
 }
 
 createApp(App)
-    .directive("tooltip", (el, binding, vnode, old)=>{
+    .directive("tooltip", (el, binding, vnode, old) => {
         new Tooltip(el, {title: binding.value, placement: binding.arg, trigger: 'hover'})
     })
+    .directive("uppercase", (el)=>{
+        el.value = el.value.toUpperCase()
+    })
     .component('country-flag', CountryFlag)
+    .component('font-awesome-icon', FontAwesomeIcon)
     .use(store)
     .use(router, axios)
     .mount('#app')

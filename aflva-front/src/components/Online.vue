@@ -58,7 +58,6 @@ export default {
     Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         .forEach(tooltipNode => {
           new Tooltip(tooltipNode)
-          console.log(tooltipNode)
         })
   },
 }

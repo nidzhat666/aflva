@@ -1,24 +1,24 @@
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
+from dateutil.relativedelta import relativedelta
+from django.db.models import Count, Avg, Sum, F, Exists, OuterRef, Subquery
 from django.shortcuts import get_object_or_404
-from django.db.models import Count, Avg, Sum
 from rest_framework import viewsets, mixins, status
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import action
 
 from aeroflot.models import Book, Pilot, Flight, Fleet, Company, Schedule
-from main.models import Penalty
+from main.models import Penalty, AircraftICAO
 from .serializers import (FlightSerializer, BookShortSerializer,
-                          PilotTopSerializer, CompanyDedicatedSerializer, ScheduleSerializer)
+                          PilotTopSerializer, CompanyDedicatedSerializer, ScheduleSerializer, FleetV2Serializer)
 from .utils import convert_hours
 
 
 class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookShortSerializer
     permission_classes = [IsAuthenticated]
-    queryset = Book.objects.all().select_related('pilot__profile')
+    queryset = Book.objects.all().select_related('pilot__profile').order_by('company')
 
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
@@ -30,9 +30,18 @@ class BookViewSet(viewsets.ModelViewSet):
         return super().retrieve(request, *args, **kwargs)
 
 
+from django.db.models import Case, When, Value, BooleanField
+
+
 class ScheduleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = (Schedule.objects.filter(is_active=True)
                 .select_related('arr_icao', 'dep_icao', 'alternate_icao', 'company')
+                .annotate(avail=Exists(Fleet.objects
+                                       .annotate(schedule=OuterRef('pk'))
+                                       .filter(status=Fleet.ACTIVE, now=OuterRef('dep_icao'),
+                                               aircraft_type__aircraft_icao__in=Subquery(AircraftICAO.objects.filter(schedule=OuterRef('schedule')).values_list('pk', flat=True)))
+                                       ),
+                          booked=Exists(Book.objects.filter(schedule_id=OuterRef('id'))))
                 .order_by('flightnum'))
     page_size = 20
     serializer_class = ScheduleSerializer
@@ -41,6 +50,26 @@ class ScheduleViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ['dep_icao__icao_code', 'dep_icao__name', 'dep_icao__city',
                      'arr_icao__icao_code', 'arr_icao__name', 'arr_icao__city', 'flightnum']
     ordering_fields = ['dep_icao__icao_code', 'arr_icao__icao_code', 'distance', 'deptime', 'flightnum']
+
+
+class FleetViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    pagination_class = None
+    serializer_class = FleetV2Serializer
+    filterset_fields = ('company__name', 'status')
+
+    def get_queryset(self):
+        qs = (Fleet.objects.filter(aircraft_type__aircraft_icao__aircraft_image__company__name=self.request.query_params.get('company__name'))
+              .select_related('company', 'now', 'aircraft_type__aircraft_icao', 'book')
+              .prefetch_related('aircraft_type__aircraft_icao__aircraft_image')
+              .annotate(icao=F('aircraft_type__aircraft_icao__aircraft_icao'),
+                        icao_image=F('aircraft_type__aircraft_icao__aircraft_image__aircraft_image'),
+                        avail=Exists(Schedule.objects.filter(
+                            aircraft_type__aircraft_icao=OuterRef('aircraft_type__aircraft_icao__aircraft_icao'),
+                            dep_icao=OuterRef('now'), book__isnull=True),
+                        ))
+              .order_by('aircraft_type__aircraft_icao__aircraft_icao', '-aircraft_type__aircraft_name'))
+        return qs
 
 
 class CompanyViewSet(viewsets.ReadOnlyModelViewSet):
@@ -95,8 +124,11 @@ class FlightViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             defaults['departure_airport'] = book.dep_airport.id if getattr(book, 'dep_airport') else None
             defaults['arrival_airport'] = book.arr_airport.id if getattr(book, 'arr_airport') else None
             #     hub
-            if (penalty := penalties.filter(name='Bonus for return to hub').first()) and book.arr_airport.icao_code == book.company.hub:
+            if (penalty := penalties.filter(name='Bonus for return to hub').first()) and book.arr_airport.icao_code in book.company.hub.split(' '):
                 defaults['penalty'].add(penalty)
+            aircraft = book.aircraft
+            aircraft.now = book.arr_airport
+            aircraft.save()
             defaults['route'] = book.route if getattr(book, 'route') else None
             defaults['pax'] = book.pax if getattr(book, 'pax') else None
             defaults['cargo'] = book.cargo if getattr(book, 'cargo') else None

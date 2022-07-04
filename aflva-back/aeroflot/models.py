@@ -103,11 +103,15 @@ def get_file_path_fleet(instance, filename):
 
 
 class Fleet(models.Model):
+    INACTIVE = 'Inactive'
+    ACTIVE = 'Active'
+    STORED = 'Stored'
+    RETRO = 'Retro'
+    STATUS_CHOISE = ((INACTIVE, 'Inactive'), (ACTIVE, 'Active'), (STORED, 'Stored'), (RETRO, 'Retro'))
     company = models.ForeignKey(Company, related_name='fleet', on_delete=models.PROTECT)
-    STATUS_CHOISE = (('Inactive', 'Inactive'), ('Active', 'Active'), ('Stored', 'Stored'), ('Retro', 'Retro'))
     aircraft_type = models.ForeignKey(AircraftType, related_name='fleet', on_delete=models.CASCADE)
     aircraft_registration = models.CharField(max_length=10, verbose_name='Aircraft Registration', unique=True)
-    aircraft_image = models.ImageField(storage=S3Boto3Storage(), upload_to=get_file_path_fleet)
+    aircraft_image = models.ImageField(storage=S3Boto3Storage(), upload_to=get_file_path_fleet, null=True, blank=True)
     status = models.CharField(max_length=100, choices=STATUS_CHOISE, default=STATUS_CHOISE[0][0])
     now = models.ForeignKey(Airport, on_delete=models.PROTECT, related_name='fleet', null=True,
                             help_text='Example: UUEE')
@@ -200,7 +204,7 @@ class Schedule(models.Model):
         dep = datetime.datetime.combine(datetime.date.today(), self.deptime)
         arr = datetime.datetime.combine(datetime.date.today(), self.arrtime)
         diff = arr - dep if dep < arr else arr - dep + datetime.timedelta(days=1)
-        return datetime.datetime.combine(datetime.date.today(), datetime.time(hour=0, minute=0, second=0))+diff
+        return datetime.datetime.combine(datetime.date.today(), datetime.time(hour=0, minute=0, second=0)) + diff
 
     def save(self, force_insert=False, force_update=False):
         if not self.distance:
@@ -212,7 +216,7 @@ class Schedule(models.Model):
 
 class Book(models.Model):
     company = models.ForeignKey(Company, on_delete=models.PROTECT, null=True, blank=True, related_name='book')
-    schedule = models.ForeignKey(Schedule, on_delete=models.PROTECT, related_name='book', editable=False,
+    schedule = models.OneToOneField(Schedule, on_delete=models.PROTECT, related_name='book', editable=False,
                                  blank=True, null=True)
     pilot = models.OneToOneField(Pilot, on_delete=models.PROTECT, related_name='book', editable=False)
     aircraft = models.OneToOneField(Fleet, related_name='book', on_delete=models.PROTECT, editable=False)

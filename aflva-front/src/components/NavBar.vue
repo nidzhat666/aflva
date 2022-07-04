@@ -27,19 +27,21 @@
              aria-expanded="false" href="#">Fleet</a>
           <ul class="dropdown-menu shadow-lg" aria-labelledby="dropdownMenuButton1">
             <li>
-              <a class="dropdown-item d-flex justify-content-between"
-                 v-for="company in companies"  v-bind:key="company" href="#">
+              <router-link class="dropdown-item d-flex justify-content-between"
+                 v-for="company in companies"  v-bind:key="company"
+                           :to="{name: 'Fleet', params:{company: company.name}}">
                 {{company.name}}
                 <img style=" width: 22px" :src="company.logo" alt="">
-              </a>
+              </router-link>
             </li>
             <hr>
             <li>
-              <a class="dropdown-item d-flex justify-content-between"
-                 v-for="company in retro"  v-bind:key="company" href="#">
+              <router-link class="dropdown-item d-flex justify-content-between"
+                 v-for="company in retro"  v-bind:key="company"
+                           :to="{name: 'Fleet', params:{company: company.name}, query:{retro: true}}">
                 {{company.name}} Retro
                 <img style="width: 22px" :src="company.logo" alt="">
-              </a>
+              </router-link>
             </li>
           </ul>
         </div>

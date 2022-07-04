@@ -1,9 +1,10 @@
 from django_countries.serializers import CountryFieldMixin
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from rest_framework import serializers
 
-from aeroflot.models import Flight, Book, Pilot, Company, Schedule
-from main.models import Profile
+from aeroflot.models import Flight, Book, Pilot, Company, Schedule, Fleet, AircraftImage
+from main.models import Profile, AircraftICAO, AircraftType
 from main.serializers import AirportSerializer, FleetSerializer
 
 User = get_user_model()
@@ -96,8 +97,42 @@ class ScheduleSerializer(serializers.ModelSerializer):
     flight_time = serializers.DateTimeField(format='%H:%M')
     deptime = serializers.TimeField(format='%H:%M')
     arrtime = serializers.TimeField(format='%H:%M')
+    avail = serializers.BooleanField()
+    booked = serializers.BooleanField()
 
     class Meta:
         model = Schedule
         fields = ('company', 'flightnum', 'callsign', 'dep_icao', 'arr_icao', 'alternate_icao',
-                  'route', 'flight_level', 'distance', 'deptime', 'arrtime', 'payload_percentage', 'flight_time')
+                  'route', 'flight_level', 'distance', 'deptime', 'arrtime', 'payload_percentage',
+                  'flight_time', 'avail', 'booked')
+
+
+class AircraftImageSerializer(serializers.ModelSerializer):
+    aircraft_icao = serializers.SlugRelatedField(slug_field='aircraft_icao', read_only=True)
+
+    class Meta:
+        model = AircraftImage
+        fields = '__all__'
+
+
+class AircraftTypeV2Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = AircraftType
+        fields = '__all__'
+
+
+class FleetV2Serializer(serializers.ModelSerializer):
+    aircraft_type = AircraftTypeV2Serializer()
+    icao = serializers.CharField()
+    icao_image = serializers.SerializerMethodField()
+    now = AirportSerializer()
+    avail = serializers.BooleanField()
+    booked = serializers.BooleanField(source='book')
+
+    class Meta:
+        model = Fleet
+        fields = ('id', 'company', 'aircraft_type', 'aircraft_registration', 'aircraft_image',
+                  'status', 'now', 'icao', 'icao_image', 'avail', 'booked')
+
+    def get_icao_image(self, obj):
+        return f'{settings.AWS_S3_ENDPOINT_URL}/{settings.AWS_STORAGE_BUCKET_NAME}/{obj.icao_image}'

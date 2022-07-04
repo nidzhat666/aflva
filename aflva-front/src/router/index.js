@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Login from "@/views/Login";
 import Profile from "@/views/Profile";
 import Schedule from "@/views/Schedule";
+import Fleet from "@/views/Fleet";
 
 const routes = [
   {
@@ -26,6 +27,14 @@ const routes = [
     path: '/schedule/:company',
     name: 'Schedule',
     component: Schedule,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/fleet/:company',
+    name: 'Fleet',
+    component: Fleet,
     meta: {
       requiresAuth: true
     }
